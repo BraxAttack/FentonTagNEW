@@ -70,18 +70,24 @@
 
       <div id="stickerMap" ng-if="FTCtrl.pageRouter == 'stickerMap'">
         Sticker Map
-        <br />
         <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
         <br />
+        Play radius
+        <input type="number" ng-model="FTCtrl.playRadius" step=".1" min=".1"/>
+        <br />
+        Map not loading?
+        <button ng-click="FTCtrl.setUpMapCalFunction()">resubmit</button>
+
+        <br />
         <div id="map" style="height: 500px; width: 500px;"></div>
+<!--
         <br />
         {{FTCtrl.AllStickers}}
         <br />
         {{FTCtrl.sessionStickers}}
         <br />
+-->
 
-        <input type="number" ng-model="FTCtrl.playRadius"/>
-        <button ng-click="FTCtrl.setUpMapCalFunction()">resubmit</button>
 
       </div>
 
@@ -100,9 +106,20 @@
         <button ng-click="FTCtrl.lookupLatLng()">Lookup!</button>
         -->
 
-        <input type="text" id="registerStickerVariableHolder" value="null" style="display: none;" autocomplete="off"/>
+        <input type="text" id="registerStickerVariableHolder" value="null" style="display: ;" autocomplete="off"/>
 
         {{FTCtrl.NewStickerVal}}
+
+
+        <div id="newStickerMap" style="height: 500px; width: 500px;"></div>
+
+        <div ng-if="FTCtrl.readyForCheckVar == 'true'">
+          <h3>Is this your current location?</h3>
+
+          <button ng-click="FTCtrl.ActullySubmitSticker('true')">Correct</button>
+          <button ng-click="FTCtrl.ActullySubmitSticker()">Wrong</button>
+        </div>
+
 
       </div>
 

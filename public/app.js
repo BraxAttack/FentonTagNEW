@@ -108,6 +108,8 @@
 
       FTCtrl.RegisterSTickerIntervalFunction = function() {
         var stickerVal =   document.getElementById('registerStickerVariableHolder').value;
+        FTCtrl.readyForCheckVar = "false";
+        FTCtrl.stivkerVal = stickerVal;
         if(stickerVal != 'null'){
           if (FTCtrl.lookupLatLngOnlyOnceVar == "none") {
               FTCtrl.lookupLatLng();
@@ -123,22 +125,11 @@
 
           if(FTCtrl.currentLatLng != null){
 
+            FTCtrl.initMapforNewSticker(FTCtrl.currentLatLng.lat, FTCtrl.currentLatLng.lng);
 
-            //alert(FTCtrl.currentLatLng);
-
-            var updates = {};
+            FTCtrl.readyForCheckVar = "true";
 
 
-            updates['/Stickers/' + stickerVal ] = FTCtrl.currentLatLng;
-
-            firebase.database().ref().update(updates)
-            .then(function(ref) {
-              console.log(ref)
-              alert("Sticker Registered");
-              FTCtrl.lookupLatLngOnlyOnceVar = "none";
-              FTCtrl.setPageRouter('landingPage');
-              $scope.$apply();
-            });
 
           }else{
             FTCtrl.RegisterSTickerIntervalFunction();
@@ -162,13 +153,41 @@
       }
 
 
+      FTCtrl.ActullySubmitSticker = function(r) {
+
+        if (r == "true") {
+            var updates = {};
+
+
+            updates['/Stickers/' + FTCtrl.stivkerVal ] = FTCtrl.currentLatLng;
+
+            firebase.database().ref().update(updates)
+            .then(function(ref) {
+              console.log(ref)
+              alert("Sticker Registered");
+              FTCtrl.readyForCheckVar = "false";
+              FTCtrl.lookupLatLngOnlyOnceVar = "none";
+              FTCtrl.stivkerVal = "";
+              FTCtrl.setPageRouter('landingPage');
+              $scope.$apply();
+            });
+
+        } else {
+          alert("Sticker Deleted, try again");
+          FTCtrl.readyForCheckVar = "false";
+          FTCtrl.lookupLatLngOnlyOnceVar = "none";
+          FTCtrl.stivkerVal = "";
+          FTCtrl.setPageRouter('landingPage');
+          $scope.$apply();
+        }
+      }
 
 
 
       //MAPS API key
       // AIzaSyD842A9boNTY_f19fGtfDaSwnbD562Utfk
 
-      FTCtrl.playRadius = 1;
+      FTCtrl.playRadius = .4;
 
       FTCtrl.calcCrow = function(lat1, lon1, lat2, lon2)
             {
@@ -192,10 +211,35 @@
 
 
 
+      FTCtrl.initMapforNewSticker = function(latVar, lngVar) {
+        var uluru = {lat: latVar, lng: lngVar};
+        var map = new google.maps.Map(document.getElementById('newStickerMap'), {
+          zoom: 18,
+          center: uluru
+        });
+
+
+
+        var centerIcon = {
+            url: 'images/mylocation.png',
+            scaledSize: new google.maps.Size(50, 50), // scaled size
+
+
+        }
+
+       marker = new google.maps.Marker({
+          position: uluru,
+          map: map,
+          icon: centerIcon
+        });
+
+
+      }
+
       FTCtrl.initMap = function(latVar, lngVar) {
         var uluru = {lat: latVar, lng: lngVar};
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 15,
+          zoom: 16,
           center: uluru
         }),
 
@@ -223,7 +267,6 @@
           icon: centerIcon
         });
 
-
         FTCtrl.sessionStickers = [];
 
         for (i = 0; i < FTCtrl.AllStickers.length; i++) {
@@ -236,19 +279,13 @@
               marker = new google.maps.Marker({
                        position: uluru,
                        map: map
-
             })
           }
         };
 
-        /*      marker = new google.maps.Marker({
-                 position: uluru,
-                 map: map,
-                 icon: centerIcon
-               });
-          */
 
       }
+
 
 
       FTCtrl.setUpMapCalFunction = function() {
