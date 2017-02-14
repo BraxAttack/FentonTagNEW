@@ -16,13 +16,44 @@
 
   .controller("FentonTagCtrl", function($scope, $interval, $timeout, Stickers) {
 
+/*
+VV     VV   AAA   RRRRRR           IIIII NN   NN IIIII TTTTTTT
+VV     VV  AAAAA  RR   RR           III  NNN  NN  III    TTT
+ VV   VV  AA   AA RRRRRR            III  NN N NN  III    TTT
+  VV VV   AAAAAAA RR  RR            III  NN  NNN  III    TTT
+   VVV    AA   AA RR   RR          IIIII NN   NN IIIII   TTT
+
+var init
+*/
+
+
       var FTCtrl = this;
 
       FTCtrl.signedIn = "";
       FTCtrl.authEmail = "";
       FTCtrl.authPass = "";
       FTCtrl.AllStickers = Stickers;
+      FTCtrl.lookupLatLngOnlyOnceVar = "none";
+      FTCtrl.playRadius = .4;
+      FTCtrl.gameType = "";
+      FTCtrl.gameDurr = "15";
+      FTCtrl.GameTypes = [
+        'Hunters and Gatherers',
+        'Grab & GO',
+        'Other'
 
+      ]
+
+
+/*
+RRRRRR   OOOOO  UU   UU TTTTTTT IIIII NN   NN   GGGG
+RR   RR OO   OO UU   UU   TTT    III  NNN  NN  GG  GG
+RRRRRR  OO   OO UU   UU   TTT    III  NN N NN GG
+RR  RR  OO   OO UU   UU   TTT    III  NN  NNN GG   GG
+RR   RR  OOOO0   UUUUU    TTT   IIIII NN   NN  GGGGGG
+
+routing
+*/
 
       //default routes to homepage on controller load
       FTCtrl.pageRouter = "landingPage";
@@ -32,6 +63,16 @@
 
       };
 
+
+/*
+  AAA   UU   UU TTTTTTT HH   HH
+ AAAAA  UU   UU   TTT   HH   HH
+AA   AA UU   UU   TTT   HHHHHHH
+AAAAAAA UU   UU   TTT   HH   HH
+AA   AA  UUUUU    TTT   HH   HH
+
+AUTH
+*/
 
       FTCtrl.authSignInWEmailPass = function() {
         var auth = firebase.auth();
@@ -65,11 +106,15 @@
         }
       })
 
+/*
+  GGGG  EEEEEEE  OOOOO    TTTTTTT RRRRRR    AAA    CCCCC  KK  KK
+ GG  GG EE      OO   OO     TTT   RR   RR  AAAAA  CC    C KK KK
+GG      EEEEE   OO   OO     TTT   RRRRRR  AA   AA CC      KKKK
+GG   GG EE      OO   OO     TTT   RR  RR  AAAAAAA CC    C KK KK
+ GGGGGG EEEEEEE  OOOO0      TTT   RR   RR AA   AA  CCCCC  KK  KK
 
-
-      FTCtrl.products = ["Milk", "Bread", "Cheese"];
-
-
+GEO TRACK
+*/
       FTCtrl.lookupLatLng = function() {
           // Try HTML5 geolocation.
           if (navigator.geolocation) {
@@ -102,9 +147,32 @@
                               'Error: Your browser doesn\'t support geolocation.');
       }
 
-      //FTCtrl.lookupLatLng();
 
-      FTCtrl.lookupLatLngOnlyOnceVar = "none";
+/*
+CCCCC  RRRRRR  EEEEEEE   AAA   TTTTTTT EEEEEEE         GGGG    AAA   MM    MM EEEEEEE
+CC    C RR   RR EE       AAAAA    TTT   EE             GG  GG  AAAAA  MMM  MMM EE
+CC      RRRRRR  EEEEE   AA   AA   TTT   EEEEE         GG      AA   AA MM MM MM EEEEE
+CC    C RR  RR  EE      AAAAAAA   TTT   EE            GG   GG AAAAAAA MM    MM EE
+CCCCC  RR   RR EEEEEEE AA   AA   TTT   EEEEEEE        GGGGGG AA   AA MM    MM EEEEEEE
+
+CREATE GAME
+*/
+
+
+
+
+
+/*
+NN   NN EEEEEEE WW      WW       SSSSS  TTTTTTT IIIII  CCCCC  KK  KK EEEEEEE RRRRRR
+NNN  NN EE      WW      WW      SS        TTT    III  CC    C KK KK  EE      RR   RR
+NN N NN EEEEE   WW   W  WW       SSSSS    TTT    III  CC      KKKK   EEEEE   RRRRRR
+NN  NNN EE       WW WWW WW           SS   TTT    III  CC    C KK KK  EE      RR  RR
+NN   NN EEEEEEE   WW   WW        SSSSS    TTT   IIIII  CCCCC  KK  KK EEEEEEE RR   RR
+
+NEW STICKER
+*/
+
+
 
       FTCtrl.RegisterSTickerIntervalFunction = function() {
         var stickerVal =   document.getElementById('registerStickerVariableHolder').value;
@@ -183,11 +251,18 @@
       }
 
 
+/*
+MM    MM   AAA   PPPPPP   SSSSS
+MMM  MMM  AAAAA  PP   PP SS
+MM MM MM AA   AA PPPPPP   SSSSS
+MM    MM AAAAAAA PP           SS
+MM    MM AA   AA PP       SSSSS
+
+MAPS
+*/
 
       //MAPS API key
       // AIzaSyD842A9boNTY_f19fGtfDaSwnbD562Utfk
-
-      FTCtrl.playRadius = .4;
 
       FTCtrl.calcCrow = function(lat1, lon1, lat2, lon2)
             {
@@ -204,11 +279,11 @@
               return d;
             }
 
+
       FTCtrl.toRad = function(Value)
       {
           return Value * Math.PI / 180;
       }
-
 
 
       FTCtrl.initMapforNewSticker = function(latVar, lngVar) {
@@ -238,7 +313,7 @@
 
       FTCtrl.initMap = function(latVar, lngVar) {
         var uluru = {lat: latVar, lng: lngVar};
-        var map = new google.maps.Map(document.getElementById('map'), {
+        var map = new google.maps.Map(document.getElementById('newGameMap'), {
           zoom: 16,
           center: uluru
         }),
@@ -310,7 +385,6 @@
                 FTCtrl.setUpMapCalFunction()
               }, 200);
             }
-
       }
 
 

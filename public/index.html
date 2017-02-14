@@ -40,12 +40,21 @@
 
   <div id="everythingElse" ng-if="FTCtrl.signedIn == 'true'">
 
+<!--
+LL        AAA   NN   NN DDDDD   IIIII NN   NN   GGGG
+LL       AAAAA  NNN  NN DD  DD   III  NNN  NN  GG  GG
+LL      AA   AA NN N NN DD   DD  III  NN N NN GG
+LL      AAAAAAA NN  NNN DD   DD  III  NN  NNN GG   GG
+LLLLLLL AA   AA NN   NN DDDDDD  IIIII NN   NN  GGGGGG
+LANDING
+-->
+
+
 
 
       <div id="landingPage" ng-if="FTCtrl.pageRouter == 'landingPage'">
         Landing Page
-        <button ng-click="FTCtrl.setPageRouter('createGame')">Create Game</button>
-        <button ng-click="FTCtrl.setPageRouter('stickerMap'); FTCtrl.setUpMapCalFunction()">Sticker Map</button>
+        <button ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction()">Create Game</button>
         <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker()">Register Sticker</button>
         <br />
         <br />
@@ -57,15 +66,62 @@
       </div>
 
 
-
+<!--
+ NN   NN EEEEEEE WW      WW         GGGG    AAA   MM    MM EEEEEEE
+ NNN  NN EE      WW      WW        GG  GG  AAAAA  MMM  MMM EE
+ NN N NN EEEEE   WW   W  WW       GG      AA   AA MM MM MM EEEEE
+ NN  NNN EE       WW WWW WW       GG   GG AAAAAAA MM    MM EE
+ NN   NN EEEEEEE   WW   WW         GGGGGG AA   AA MM    MM EEEEEEE
+NEW GAME
+-->
 
 
 
       <div id="createGame" ng-if="FTCtrl.pageRouter == 'createGame'">
         create Game
         <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+        <br />
+
+
+        <input-container style="margin-right: 10px;">
+          <label>Game Type</label>
+          <select ng-model="FTCtrl.gameType">
+            <option ng-repeat="game in FTCtrl.GameTypes" value="{{game}}">{{game}}</option>
+          </select>
+        </input-container>
+        <br />
+
+        <button class="raised primary" ng-click="FTCtrl.gameDurr = 15">15 min</button>
+        <button class="raised primary" ng-click="FTCtrl.gameDurr = 25">25 min</button>
+        <button class="raised primary" ng-click="FTCtrl.gameDurr = 45">45 min</button>
+        <button class="raised primary" ng-click="FTCtrl.gameDurr = 60">60 min</button>
+        {{FTCtrl.gameDurr}}
+        <br />
+
+        Play radius
+        <input type="number" ng-model="FTCtrl.playRadius" step=".05" min=".1"/>
+        <br />
+        Map not loading?
+        <button ng-click="FTCtrl.setUpMapCalFunction()">resubmit</button>
+
+        <br />
+        <div id="newGameMap" style="height: 500px; width: 500px;"></div>
+
+        <br />
+        {{FTCtrl.sessionStickers}}
+        <br />
 
       </div>
+
+
+<!--
+ SSSSS  TTTTTTT IIIII  CCCCC  KK  KK EEEEEEE RRRRRR        MM    MM   AAA   PPPPPP
+SS        TTT    III  CC    C KK KK  EE      RR   RR       MMM  MMM  AAAAA  PP   PP
+ SSSSS    TTT    III  CC      KKKK   EEEEE   RRRRRR        MM MM MM AA   AA PPPPPP
+     SS   TTT    III  CC    C KK KK  EE      RR  RR        MM    MM AAAAAAA PP
+ SSSSS    TTT   IIIII  CCCCC  KK  KK EEEEEEE RR   RR       MM    MM AA   AA PP
+STICKER MAP
+-->
 
 
       <div id="stickerMap" ng-if="FTCtrl.pageRouter == 'stickerMap'">
@@ -90,6 +146,16 @@
 
 
       </div>
+
+<!--
+NN   NN EEEEEEE WW      WW       SSSSS  TTTTTTT IIIII  CCCCC  KK  KK EEEEEEE RRRRRR
+NNN  NN EE      WW      WW      SS        TTT    III  CC    C KK KK  EE      RR   RR
+NN N NN EEEEE   WW   W  WW       SSSSS    TTT    III  CC      KKKK   EEEEE   RRRRRR
+NN  NNN EE       WW WWW WW           SS   TTT    III  CC    C KK KK  EE      RR  RR
+NN   NN EEEEEEE   WW   WW        SSSSS    TTT   IIIII  CCCCC  KK  KK EEEEEEE RR   RR
+
+NEW STICKER
+-->
 
 
 
