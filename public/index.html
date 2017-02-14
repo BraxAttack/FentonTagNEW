@@ -9,8 +9,14 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angularFire/2.3.0/angularfire.js"></script>
-  <!--<script type="text/javascript" src="//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js"></script>-->
-  <script type="text/javascript" src="ExternalJs/geoip2.js"></script>
+
+
+
+
+  <script src="app.js"></script>
+  <script src="bridgeITtest/QRscan.js"></script>
+  <!--services -->
+
 
 <body ng-app="fentonTagApp">
 
@@ -39,14 +45,16 @@
       <div id="landingPage" ng-if="FTCtrl.pageRouter == 'landingPage'">
         Landing Page
         <button ng-click="FTCtrl.setPageRouter('createGame')">Create Game</button>
-        <button ng-click="FTCtrl.setPageRouter('registerSticker')">Register Sticker</button>
-
-
+        <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker()">Register Sticker</button>
         <br />
         <br />
         <br />
         <button ng-click="FTCtrl.logOut()">log Out</button>
       </div>
+
+
+
+
 
 
       <div id="createGame" ng-if="FTCtrl.pageRouter == 'createGame'">
@@ -58,9 +66,13 @@
       </div>
 
 
+
+
+
+
       <div id="registerSticker" ng-if="FTCtrl.pageRouter == 'registerSticker'">
         register Sticker
-        <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+        <button ng-click="FTCtrl.setPageRouter('landingPage'); FTCtrl.cancelRegisterSticker()">homepage</button>
         <br />
         <button id="scanBtn" type="button" class="btn" style="color: green;"
             onclick="bridgeit.scan('scanBtn','onAfterCaptureScan');">
@@ -69,11 +81,10 @@
 
         <button ng-click="FTCtrl.lookupLatLng()">Lookup!</button>
 
-
-
-
-
       </div>
+
+
+
 
 
 
@@ -84,14 +95,8 @@
 </div>
 
 
-
-
 <!-- html complete -->
 
-
-<script src="app.js"></script>
-<script src="bridgeITtest/QRscan.js"></script>
-<!--services -->
 
 
 

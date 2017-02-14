@@ -5,7 +5,7 @@
 
 
 
-  app.controller("FentonTagCtrl", function($scope) {
+  app.controller("FentonTagCtrl", function($scope, $interval) {
 
       var FTCtrl = this;
 
@@ -60,23 +60,57 @@
 
 
       FTCtrl.lookupLatLng = function() {
-          var onSuccess = function(location){
-            alert(
-                "Lookup successful:\n\n"
-                + JSON.stringify(location, undefined, 4)
-            );
-          };
-
-          var onError = function(error){
-            alert(
-                "Error:\n\n"
-                + JSON.stringify(error, undefined, 4)
-            );
-          };
+          // Try HTML5 geolocation.
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
 
 
-          geoip2.city(onSuccess, onError);
+              FTCtrl.currentLatLng = pos;
+              $scope.$apply();
+              console.log(FTCtrl.currentLatLng);
+
+            }, function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+            });
+          } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+          }
+
+
       }
+
+      FTCtrl.handleLocationError = function(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+      }
+
+      //FTCtrl.lookupLatLng();
+
+      FTCtrl.RegisterSTickerIntervalFunction = function() {
+        console.log("logged");
+      }
+
+      FTCtrl.RegisterSticker = function() {
+          console.log("start check register sticker")
+          FTCtrl.registerStickerIntervalPromise = $interval(FTCtrl.RegisterSTickerIntervalFunction , 250);
+
+
+      }
+
+      FTCtrl.cancelRegisterSticker = function () {
+        $interval.cancel(FTCtrl.registerStickerIntervalPromise);
+      }
+
+
+
+
 
 
 
