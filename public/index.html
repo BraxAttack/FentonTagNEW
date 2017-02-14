@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+
+  <script type="text/javascript" src="https://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>-->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angularFire/2.3.0/angularfire.js"></script>
+
+<body ng-app="fentonTagApp">
+
+
+<div ng-controller="FentonTagCtrl as FTCtrl">
+
+  <div id="loginPage" ng-if="FTCtrl.signedIn == 'false'">
+    <h1>Log In</h1>
+    <input type="text" ng-model="FTCtrl.authEmail" />
+    <input type="password" ng-model="FTCtrl.authPass"  />
+    <button ng-click="FTCtrl.authSignInWEmailPass()">Sign In</button>
+    {{FTCtrl.signedIn}}
+  </div>
+
+  <div id="everythingElse" ng-if="FTCtrl.signedIn == 'true'">
+      <button ng-click="FTCtrl.logOut()" ng-if="FTCtrl.signedIn == 'true'">log Out</button>
+      {{FTCtrl.signedIn}}
+
+      <div id="landingPage" ng-if="FTCtrl.pageRouter == 'landingPage'">
+        Landing Page
+        <button ng-click="FTCtrl.setPageRouter(createGame)">Create Game</button>
+        <button ng-click="FTCtrl.setPageRouter(registerSticker)">Register Sticker</button>
+
+      </div>
+      <div id="createGame" ng-if="FTCtrl.pageRouter == 'createGame'">
+        create Game
+
+
+      </div>
+      <div id="registerSticker" ng-if="FTCtrl.pageRouter == 'registerSticker'">
+        register Sticker
+
+
+      </div>
+
+      <br />
+      <br />
+      <br />
+
+      <button id="scanBtn" type="button" class="btn" style="color: green;"
+          onclick="bridgeit.scan('scanBtn','onAfterCaptureScan');">
+          Scan a Code
+      </button>
+
+
+
+  </div>
+
+
+</div>
+
+
+
+
+<!-- html complete -->
+
+
+<script src="app.js"></script>
+<script src="bridgeITtest/QRscan.js"></script>
+<!--services -->
+
+
+
+</body>
+</html>
