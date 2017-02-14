@@ -9,6 +9,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angularFire/2.3.0/angularfire.js"></script>
+  <!--<script type="text/javascript" src="//js.maxmind.com/js/apis/geoip2/v2.1/geoip2.js"></script>-->
+  <script type="text/javascript" src="ExternalJs/geoip2.js"></script>
 
 <body ng-app="fentonTagApp">
 
@@ -17,41 +19,62 @@
 
   <div id="loginPage" ng-if="FTCtrl.signedIn == 'false'">
     <h1>Log In</h1>
-    <input type="text" ng-model="FTCtrl.authEmail" />
-    <input type="password" ng-model="FTCtrl.authPass"  />
-    <button ng-click="FTCtrl.authSignInWEmailPass()">Sign In</button>
+    <form ng-submit="FTCtrl.authSignInWEmailPass()">
+      <input type="text" ng-model="FTCtrl.authEmail" />
+      <input type="password" ng-model="FTCtrl.authPass"  />
+      <button type="submit">Sign In</button>
+    </form>
+
     {{FTCtrl.signedIn}}
+
   </div>
 
+
+
+
   <div id="everythingElse" ng-if="FTCtrl.signedIn == 'true'">
-      <button ng-click="FTCtrl.logOut()" ng-if="FTCtrl.signedIn == 'true'">log Out</button>
-      {{FTCtrl.signedIn}}
+
+
 
       <div id="landingPage" ng-if="FTCtrl.pageRouter == 'landingPage'">
         Landing Page
-        <button ng-click="FTCtrl.setPageRouter(createGame)">Create Game</button>
-        <button ng-click="FTCtrl.setPageRouter(registerSticker)">Register Sticker</button>
+        <button ng-click="FTCtrl.setPageRouter('createGame')">Create Game</button>
+        <button ng-click="FTCtrl.setPageRouter('registerSticker')">Register Sticker</button>
 
+
+        <br />
+        <br />
+        <br />
+        <button ng-click="FTCtrl.logOut()">log Out</button>
       </div>
+
+
       <div id="createGame" ng-if="FTCtrl.pageRouter == 'createGame'">
         create Game
+        <br />
+        <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
 
 
       </div>
+
+
       <div id="registerSticker" ng-if="FTCtrl.pageRouter == 'registerSticker'">
         register Sticker
+        <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+        <br />
+        <button id="scanBtn" type="button" class="btn" style="color: green;"
+            onclick="bridgeit.scan('scanBtn','onAfterCaptureScan');">
+            Scan a Code
+        </button>
+
+        <button ng-click="FTCtrl.lookupLatLng()">Lookup!</button>
+
+
+
 
 
       </div>
 
-      <br />
-      <br />
-      <br />
-
-      <button id="scanBtn" type="button" class="btn" style="color: green;"
-          onclick="bridgeit.scan('scanBtn','onAfterCaptureScan');">
-          Scan a Code
-      </button>
 
 
 
