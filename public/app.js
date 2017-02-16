@@ -32,8 +32,22 @@
     return Users;
   })
 
+  app.factory('GameInfo', function($firebaseArray, $firebaseObject){
 
-  .controller("FentonTagCtrl", function($scope, $interval, $timeout, $firebaseAuth, Stickers, Users) {
+    var gameRef = firebase.database().ref('Games');
+    var users = $firebaseArray(gameRef);
+
+    var Game = {
+      getGameInfo: function(uid){
+        return $firebaseObject(gameRef.child(uid));
+      }
+    };
+
+    return Game;
+  })
+
+
+  .controller("FentonTagCtrl", function($scope, $interval, $timeout, $firebaseAuth, Stickers, Users, GameInfo) {
 
 /*
 VV     VV   AAA   RRRRRR           IIIII NN   NN IIIII TTTTTTT
@@ -68,7 +82,8 @@ var init
       FTCtrl.currentUserUserList = {};
       FTCtrl.users = Users;
       FTCtrl.setDisplayNameVar = "";
-
+      FTCtrl.GameName = "Game (real original...)"
+      FTCtrl.getGameInfo = GameInfo;
 
 /*
       $interval(function () {
@@ -260,11 +275,13 @@ NEW GAME
         FTCtrl.gameOptions = {
           gameLength: FTCtrl.gameDurr,
           gameType: FTCtrl.gameType,
+          gameName: FTCtrl.GameName,
           host: FTCtrl.currentUser['uid'],
           originlat: FTCtrl.currentLatLng.lat,
           originlng: FTCtrl.currentLatLng.lng,
           radius: FTCtrl.playRadius,
-          seshStickers: FTCtrl.sessionStickers
+          gameID: gameKey,
+          gameStickers: FTCtrl.sessionStickers
 
 
         };
@@ -274,7 +291,28 @@ NEW GAME
         firebase.database().ref().update(gameUpdates)
         .then(function(ref){
           console.log(ref);
-          //alert("game created");
+          var profileUpdates = {};
+          profileUpdates['/users/' + FTCtrl.currentUser.uid + '/gameCurrent'] = gameKey;
+          firebase.database().ref().update(profileUpdates)
+          .then(function(ref){
+            //console.log(ref);
+                var addUserToGame = {};
+                var playerData = {
+                  points: 0,
+                  pointsHit: {}
+                }
+                addUserToGame['/GamePlayers/' + gameKey + '/' + FTCtrl.currentUser.uid] = playerData;
+                firebase.database().ref().update(addUserToGame)
+                .then(function(ref){
+                  //console.log(ref);
+
+
+
+                  FTCtrl.pageRouter = 'currentGame';
+                  $scope.$apply();
+                })
+          })
+
 
         })
 
@@ -292,6 +330,29 @@ CC    C UU   UU RR  RR  RR  RR  EE      NN  NNN   TTT        GG   GG AAAAAAA MM 
 CURRENT GAME
 */
 
+  FTCtrl.getCurrentGame = function($firebaseObject, $firebaseArray) {
+    console.log("searching");
+    if (FTCtrl.currentUserUserList['gameCurrent'] != null) {
+
+      FTCtrl.getGameInfo.getGameInfo('-Kd3jaZIxBB2ZlHL8qaS').$loaded()
+        .then(function (profile){
+
+            console.log(profile);
+            FTCtrl.currentUserUserList = profile;
+            //alert("got IT")
+
+        });
+
+
+    }else{
+        $timeout(function () {
+          FTCtrl.getCurrentGame();
+        }, 100);
+    }
+
+
+
+  }
 
 
 

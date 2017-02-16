@@ -72,17 +72,22 @@ LANDING
 
       <div id="landingPage" ng-if="FTCtrl.pageRouter == 'landingPage'">
         Landing Page
+        <br />
+        <h1>{{FTCtrl.currentUserUserList['displayName']}}</h1>
+        <h3>{{FTCtrl.currentUser['email']}}</h3>
         <button ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction()">Create Game</button>
         <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker()">Register Sticker</button>
+        <button ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame()">current Game</button>
         <br />
         <br />
         <br />
         <button ng-click="FTCtrl.logOut()">log Out</button>
+<!--
         <br />
         {{FTCtrl.currentUserUserList}}
         <br />
         {{FTCtrl.currentUser}}
-
+-->
 
       </div>
 
@@ -123,7 +128,8 @@ NEW GAME
         <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
         <br />
 
-
+        <input type="text" ng-model="FTCtrl.GameName" />
+        <br />
         <input-container style="margin-right: 10px;">
           <label>Game Type</label>
           <select ng-model="FTCtrl.gameType">
@@ -151,15 +157,53 @@ NEW GAME
         <br />
         <button ng-click="FTCtrl.createGameSubmit()">Init Game</button>
 
+<!--
         <br />
         {{FTCtrl.sessionStickers}}
         <br />
         {{FTCtrl.currentUser['uid']}}
-
-
-
-
+-->
       </div>
+
+<!--
+ CCCCC  UU   UU RRRRRR  RRRRRR  EEEEEEE NN   NN TTTTTTT        GGGG    AAA   MM    MM EEEEEEE
+CC    C UU   UU RR   RR RR   RR EE      NNN  NN   TTT         GG  GG  AAAAA  MMM  MMM EE
+CC      UU   UU RRRRRR  RRRRRR  EEEEE   NN N NN   TTT        GG      AA   AA MM MM MM EEEEE
+CC    C UU   UU RR  RR  RR  RR  EE      NN  NNN   TTT        GG   GG AAAAAAA MM    MM EE
+ CCCCC   UUUUU  RR   RR RR   RR EEEEEEE NN   NN   TTT         GGGGGG AA   AA MM    MM EEEEEEE
+
+CURRENT GAME
+-->
+
+  <div id="currentGame" ng-if="FTCtrl.pageRouter == 'currentGame'">
+    Current Game
+    <br />
+    <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+    <br />
+    Game Name:
+    {{FTCtrl.currentUserUserList['$id']}}
+    <br />
+    Game Length:
+    {{FTCtrl.currentUserUserList['gameLength']}}
+    <br />
+    Game Name:
+    {{FTCtrl.currentUserUserList['gameName']}}
+    <br />
+    Game Type:
+    {{FTCtrl.currentUserUserList['$id']}}
+    <br />
+    Lat/Lng:
+    {{FTCtrl.currentUserUserList['originlat']}} / {{FTCtrl.currentUserUserList['originlng']}}
+    <br />
+    Radius
+    {{FTCtrl.currentUserUserList['radius']}}
+    <br />
+
+    {{FTCtrl.currentGameInfo}}
+
+
+
+  </div>
 
 
 <!--
