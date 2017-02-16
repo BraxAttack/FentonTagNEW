@@ -322,8 +322,6 @@ NEW GAME
         };
         console.log(FTCtrl.gameOptions);
 
-        FTCtrl.JoinGameEditFirebaseEntry(gameKey);
-/*
         gameUpdates['/Games/' + gameKey] = FTCtrl.gameOptions;
         firebase.database().ref().update(gameUpdates)
         .then(function(ref){
@@ -353,7 +351,7 @@ NEW GAME
 
 
         })
-*/
+
   };
 
 
@@ -407,40 +405,6 @@ JJ  JJJ OO   OO  III  NN  NNN     GG   GG AAAAAAA MM    MM EE
 JOIN GAME
 */
 
-FTCtrl.JoinGameEditFirebaseEntry = firebase(gameKey) {
-    gameUpdates['/Games/' + gameKey] = FTCtrl.gameOptions;
-    firebase.database().ref().update(gameUpdates)
-    .then(function(ref){
-      console.log(ref);
-      var profileUpdates = {};
-      profileUpdates['/users/' + FTCtrl.currentUser.uid + '/gameCurrent'] = gameKey;
-      firebase.database().ref().update(profileUpdates)
-      .then(function(ref){
-        console.log(ref);
-            var addUserToGame = {};
-            var playerData = {
-              points: 0,
-              pointsHit: {}
-            }
-            addUserToGame['/GamePlayers/' + gameKey + '/' + FTCtrl.currentUser.uid] = playerData;
-            firebase.database().ref().update(addUserToGame)
-            .then(function(ref){
-              console.log("added")
-              console.log(ref);
-
-              //updates the current game
-              FTCtrl.getCurrentGame();
-              FTCtrl.pageRouter = 'currentGame';
-              $scope.$apply();
-            })
-      })
-
-
-    })
-
-}
-
-
 
 
 FTCtrl.JoinGameIntervalFunction = function() {
@@ -448,7 +412,7 @@ FTCtrl.JoinGameIntervalFunction = function() {
   console.log(JoinGameID)
   if(JoinGameID != 'null'){
 
-    FTCtrl.JoinGameEditFirebaseEntry(JoinGameID);
+       
     console.log("not null");
     FTCtrl.cancelJoinGame()
   }
