@@ -16,7 +16,9 @@
   <script src="app.js"></script>
   <script src="bridgeITtest/QRscan.js"></script>
   <!--services -->
+  <style>
 
+  </style>
 
 <body ng-app="fentonTagApp">
 
@@ -28,6 +30,7 @@
 
     <div id="loginPage" ng-if="FTCtrl.pageRouter == null">
       <h1>Log In</h1>
+      <button ng-click="FTCtrl.authGoogle()">Google</button>
       <form ng-submit="FTCtrl.authSignInWEmailPass()">
         <input type="text" ng-model="FTCtrl.authEmail" />
         <input type="password" ng-model="FTCtrl.authPass"  />
@@ -35,20 +38,24 @@
       </form>
       <button ng-click="FTCtrl.setPageRouter('signUp')">Sign up</button>
 
+<!--
       {{FTCtrl.signedIn}}
-
+-->
     </div>
 
 
     <div id="registerPage" ng-if="FTCtrl.pageRouter == 'signUp'">
       Sign Up
+      <br />
+      <button ng-click="FTCtrl.setPageRouter(null)">log in</button>
+      <br />
       <form ng-submit="FTCtrl.authRegisterWithEmailPass()">
         <input type="text" ng-model="FTCtrl.registerEmail" />
         <input type="password" ng-model="FTCtrl.registerPass"  />
         <button type="submit">Register</button>
       </form>
 
-      <button ng-click="FTCtrl.setPageRouter(null)">Sign up</button>
+
     </div>
 
   </div>
@@ -79,6 +86,7 @@ LANDING
         <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker()">Register Sticker</button>
         <button ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame()">current Game</button>
         <button ng-click="FTCtrl.setPageRouter('profileEdit'); FTCtrl.setEditInputsToValues()">Edit Profile</button>
+        <button ng-click="FTCtrl.setPageRouter('joinGame');">Join Game</button>
 
 
         <br />
@@ -107,7 +115,7 @@ PROFILE
       <div id="profileEdit" ng-if="FTCtrl.pageRouter == 'profileEdit'">
         profie Edit
         <br />
-        <button ng-click="FTCtrl.setPageRouter('landingPage')" ng-if="FTCtrl.setDisplayNameVar != ''">homepage</button>
+        <button ng-click="FTCtrl.setPageRouter('landingPage')" ng-if="FTCtrl.currentUserUserList.displayName">homepage</button>
         <br />
         <form ng-submit="FTCtrl.setDisplayName()">
           <input type="text" ng-model="FTCtrl.setDisplayNameVar" />
@@ -130,7 +138,9 @@ NEW GAME
 
       <div id="createGame" ng-if="FTCtrl.pageRouter == 'createGame'">
         create Game
+        <br />
         <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+        <br />
         <br />
 
         <input type="text" ng-model="FTCtrl.GameName" />
@@ -147,7 +157,7 @@ NEW GAME
         <button class="raised primary" ng-click="FTCtrl.gameDurr = 25">25 min</button>
         <button class="raised primary" ng-click="FTCtrl.gameDurr = 45">45 min</button>
         <button class="raised primary" ng-click="FTCtrl.gameDurr = 60">60 min</button>
-        {{FTCtrl.gameDurr}}
+
         <br />
 
         Play radius
@@ -162,10 +172,10 @@ NEW GAME
         <br />
         <button ng-click="FTCtrl.createGameSubmit()">Init Game</button>
 
-
+<!--
         <br />
         {{FTCtrl.sessionStickers}}
-
+-->
 
       </div>
 
@@ -205,9 +215,39 @@ CURRENT GAME
 
     {{FTCtrl.currentGameInfo}}
 
+    <button ng-click="foo = 'get it'">apply</button>
+
+
+
+
+    <h1>Angular QR Code</h1>
+
+
+
+    <qrcode version="3" error-correction-level="H" size="250" data="{{foo}}"></qrcode>
+
+
 
 
   </div>
+
+<!--
+    JJJ  OOOOO  IIIII NN   NN       GGGG    AAA   MM    MM EEEEEEE
+    JJJ OO   OO  III  NNN  NN      GG  GG  AAAAA  MMM  MMM EE
+    JJJ OO   OO  III  NN N NN     GG      AA   AA MM MM MM EEEEE
+JJ  JJJ OO   OO  III  NN  NNN     GG   GG AAAAAAA MM    MM EE
+ JJJJJ   OOOO0  IIIII NN   NN      GGGGGG AA   AA MM    MM EEEEEEE
+
+Join Game
+-->
+
+  <div id="Join Game" ng-if="FTCtrl.pageRouter == 'joinGame'">
+    Join Game
+    <br />
+    <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+
+  </div>
+
 
 
 <!--
@@ -257,6 +297,7 @@ NEW STICKER
 
       <div id="registerSticker" ng-if="FTCtrl.pageRouter == 'registerSticker'">
         register Sticker
+        <br />
         <button ng-click="FTCtrl.setPageRouter('landingPage'); FTCtrl.cancelRegisterSticker()">homepage</button>
         <br />
         <button id="scanBtn" type="button" class="btn" style="color: black;"
@@ -304,6 +345,12 @@ NEW STICKER
 <script async defer
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD842A9boNTY_f19fGtfDaSwnbD562Utfk&callback=initMap">
 </script>
+
+<!--QR generation js-->
+
+<script src="QRGen/qrcode.js"></script>
+<script src="QRGen/qrcode_UTF8.js"></script>
+<script src="QRGen/angular-qrcode.js"></script>
 
 
 </body>
