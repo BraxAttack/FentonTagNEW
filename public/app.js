@@ -322,6 +322,8 @@ NEW GAME
         };
         console.log(FTCtrl.gameOptions);
 
+        FTCtrl.JoinGameEditFirebaseEntry(gameKey);
+/*
         gameUpdates['/Games/' + gameKey] = FTCtrl.gameOptions;
         firebase.database().ref().update(gameUpdates)
         .then(function(ref){
@@ -351,7 +353,7 @@ NEW GAME
 
 
         })
-
+*/
   };
 
 
@@ -377,7 +379,7 @@ CURRENT GAME
             FTCtrl.currentUserUserList = profile;
 
               $scope.foo = FTCtrl.currentUserUserList['$id']
-            
+
 
             //alert("got IT")
 
@@ -395,16 +397,75 @@ CURRENT GAME
   }
 
 
-
 /*
-RRRRRR  EEEEEEE   GGGG  IIIII  SSSSS  TTTTTTT EEEEEEE RRRRRR
-RR   RR EE       GG  GG  III  SS        TTT   EE      RR   RR
-RRRRRR  EEEEE   GG       III   SSSSS    TTT   EEEEE   RRRRRR
-RR  RR  EE      GG   GG  III       SS   TTT   EE      RR  RR
-RR   RR EEEEEEE  GGGGGG IIIII  SSSSS    TTT   EEEEEEE RR   RR
+    JJJ  OOOOO  IIIII NN   NN       GGGG    AAA   MM    MM EEEEEEE
+    JJJ OO   OO  III  NNN  NN      GG  GG  AAAAA  MMM  MMM EE
+    JJJ OO   OO  III  NN N NN     GG      AA   AA MM MM MM EEEEE
+JJ  JJJ OO   OO  III  NN  NNN     GG   GG AAAAAAA MM    MM EE
+ JJJJJ   OOOO0  IIIII NN   NN      GGGGGG AA   AA MM    MM EEEEEEE
 
-Register
+JOIN GAME
 */
+
+FTCtrl.JoinGameEditFirebaseEntry = firebase(gameKey) {
+    gameUpdates['/Games/' + gameKey] = FTCtrl.gameOptions;
+    firebase.database().ref().update(gameUpdates)
+    .then(function(ref){
+      console.log(ref);
+      var profileUpdates = {};
+      profileUpdates['/users/' + FTCtrl.currentUser.uid + '/gameCurrent'] = gameKey;
+      firebase.database().ref().update(profileUpdates)
+      .then(function(ref){
+        console.log(ref);
+            var addUserToGame = {};
+            var playerData = {
+              points: 0,
+              pointsHit: {}
+            }
+            addUserToGame['/GamePlayers/' + gameKey + '/' + FTCtrl.currentUser.uid] = playerData;
+            firebase.database().ref().update(addUserToGame)
+            .then(function(ref){
+              console.log("added")
+              console.log(ref);
+
+              //updates the current game
+              FTCtrl.getCurrentGame();
+              FTCtrl.pageRouter = 'currentGame';
+              $scope.$apply();
+            })
+      })
+
+
+    })
+
+}
+
+
+
+
+FTCtrl.JoinGameIntervalFunction = function() {
+  var JoinGameID =   document.getElementById('JoinGameVariableHolder').value;
+  console.log(JoinGameID)
+  if(JoinGameID != 'null'){
+
+    FTCtrl.JoinGameEditFirebaseEntry(JoinGameID);
+    console.log("not null");
+    FTCtrl.cancelJoinGame()
+  }
+
+
+}
+
+FTCtrl.JoinGame = function() {
+    console.log("start check register sticker")
+    FTCtrl.JoinGameIntervalPromise = $interval(FTCtrl.JoinGameIntervalFunction , 250);
+
+}
+
+FTCtrl.cancelJoinGame = function () {
+  $interval.cancel(FTCtrl.JoinGameIntervalPromise);
+  //console.log("done");
+}
 
 
 
