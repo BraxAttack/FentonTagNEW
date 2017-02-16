@@ -208,11 +208,30 @@ PROFILE
     firebase.database().ref().update(profileUpdates)
     .then(function(ref){
       console.log(ref);
-      FTCtrl.pageRouter = 'landingPage';
+      FTCtrl.goBacktoHomepageFromProfile();
+
     })
 
   }
 
+  FTCtrl.goBacktoHomepageFromProfile = function() {
+    FTCtrl.users.getProfile(FTCtrl.currentUser.uid).$loaded().then(function (profile){
+      if(profile.displayName){
+        //return profile;
+        FTCtrl.currentUserUserList = profile;
+        FTCtrl.pageRouter = 'landingPage';
+      } else {
+        FTCtrl.pageRouter = "profileEdit";
+
+      }
+    });
+  }
+
+  FTCtrl.setEditInputsToValues = function() {
+
+    FTCtrl.setDisplayNameVar = FTCtrl.currentUserUserList.displayName;
+
+  }
 
 
 /*
@@ -331,10 +350,10 @@ CURRENT GAME
 */
 
   FTCtrl.getCurrentGame = function($firebaseObject, $firebaseArray) {
-    console.log("searching");
-    if (FTCtrl.currentUserUserList['gameCurrent'] != null) {
 
-      FTCtrl.getGameInfo.getGameInfo('-Kd3jaZIxBB2ZlHL8qaS').$loaded()
+    if (FTCtrl.currentUserUserList['gameCurrent'] != null) {
+      //console.log(FTCtrl.currentUserUserList);
+      FTCtrl.getGameInfo.getGameInfo(FTCtrl.currentUserUserList['gameCurrent']).$loaded()
         .then(function (profile){
 
             console.log(profile);

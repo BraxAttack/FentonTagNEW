@@ -78,6 +78,9 @@ LANDING
         <button ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction()">Create Game</button>
         <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker()">Register Sticker</button>
         <button ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame()">current Game</button>
+        <button ng-click="FTCtrl.setPageRouter('profileEdit'); FTCtrl.setEditInputsToValues()">Edit Profile</button>
+
+
         <br />
         <br />
         <br />
@@ -103,6 +106,8 @@ PROFILE
 
       <div id="profileEdit" ng-if="FTCtrl.pageRouter == 'profileEdit'">
         profie Edit
+        <br />
+        <button ng-click="FTCtrl.setPageRouter('landingPage')" ng-if="FTCtrl.setDisplayNameVar != ''">homepage</button>
         <br />
         <form ng-submit="FTCtrl.setDisplayName()">
           <input type="text" ng-model="FTCtrl.setDisplayNameVar" />
@@ -157,12 +162,11 @@ NEW GAME
         <br />
         <button ng-click="FTCtrl.createGameSubmit()">Init Game</button>
 
-<!--
+
         <br />
         {{FTCtrl.sessionStickers}}
-        <br />
-        {{FTCtrl.currentUser['uid']}}
--->
+
+
       </div>
 
 <!--
