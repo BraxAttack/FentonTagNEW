@@ -13,8 +13,27 @@
     return stickers;
   })
 
+  app.factory('Users', function($firebaseArray, $firebaseObject){
 
-  .controller("FentonTagCtrl", function($scope, $interval, $timeout, Stickers) {
+    var usersRef = firebase.database().ref('users');
+    var connectedRef = firebase.database().ref('.info/connected');
+    var users = $firebaseArray(usersRef);
+
+    var Users = {
+      getProfile: function(uid){
+        return $firebaseObject(usersRef.child(uid));
+      },
+      getDisplayName: function(uid){
+        return users.$getRecord(uid).displayName;
+      },
+      all: users
+    };
+
+    return Users;
+  })
+
+
+  .controller("FentonTagCtrl", function($scope, $interval, $timeout, $firebaseAuth, Stickers, Users) {
 
 /*
 VV     VV   AAA   RRRRRR           IIIII NN   NN IIIII TTTTTTT
@@ -43,8 +62,19 @@ var init
         'Other'
 
       ]
+      FTCtrl.gameType = FTCtrl.GameTypes[0];
+      //currentUser is set in the AUTH section
+      FTCtrl.currentUser = "";
+      FTCtrl.currentUserUserList = {};
+      FTCtrl.users = Users;
+      FTCtrl.setDisplayNameVar = "";
 
 
+/*
+      $interval(function () {
+        console.log(FTCtrl.currentUser);
+      }, 100);
+*/
 /*
 RRRRRR   OOOOO  UU   UU TTTTTTT IIIII NN   NN   GGGG
 RR   RR OO   OO UU   UU   TTT    III  NNN  NN  GG  GG
@@ -56,7 +86,7 @@ routing
 */
 
       //default routes to homepage on controller load
-      FTCtrl.pageRouter = "landingPage";
+      //FTCtrl.pageRouter = "landingPage";
 
       FTCtrl.setPageRouter = function(location) {
           FTCtrl.pageRouter = location;
@@ -85,10 +115,27 @@ AUTH
 
       }
 
+      FTCtrl.authRegisterWithEmailPass = function() {
+        var auth = $firebaseAuth();
+        var email = FTCtrl.registerEmail;
+        var password = FTCtrl.registerPass;
+        var promise = auth.$createUserWithEmailAndPassword(email, password);
+        promise.catch(function(e) {
+          alert(e.message);
+          FTCtrl.registerEmail = "";
+          FTCtrl.registerPass =""
+        });
+
+      }
+
+
+
 
       FTCtrl.logOut = function() {
         firebase.auth().signOut();
         FTCtrl.signedIn = 'false';
+        FTCtrl.currentUser = "";
+        FTCtrl.pageRouter = null;
         $scope.$apply();
       };
 
@@ -96,15 +143,62 @@ AUTH
 
       firebase.auth().onAuthStateChanged(firebaseUser => {
         if(firebaseUser) {
-          console.log('got em');
+          console.log(firebaseUser);
           FTCtrl.signedIn = 'true';
+          FTCtrl.currentUser = firebaseUser;
+          console.log(FTCtrl.currentUser.uid);
+          FTCtrl.users.getProfile(FTCtrl.currentUser.uid).$loaded().then(function (profile){
+            if(profile.displayName){
+              //return profile;
+              FTCtrl.currentUserUserList = profile;
+            } else {
+              FTCtrl.pageRouter = "profileEdit";
+
+            }
+          });
+
+          FTCtrl.pageRouter = "landingPage";
+          if(true) {
+
+          }
           $scope.$apply();
         } else {
           console.log('not logged in');
           FTCtrl.signedIn = 'false';
+          FTCtrl.currentUser = "";
+          FTCtrl.pageRouter = null;
           $scope.$apply();
         }
       })
+
+/*
+PPPPPP  RRRRRR   OOOOO  FFFFFFF IIIII LL      EEEEEEE
+PP   PP RR   RR OO   OO FF       III  LL      EE
+PPPPPP  RRRRRR  OO   OO FFFF     III  LL      EEEEE
+PP      RR  RR  OO   OO FF       III  LL      EE
+PP      RR   RR  OOOO0  FF      IIIII LLLLLLL EEEEEEE
+
+PROFILE
+*/
+
+  FTCtrl.setDisplayName = function() {
+    console.log("fired");
+    var profileUpdates = {};
+    var profileData = {
+      displayName: FTCtrl.setDisplayNameVar,
+      gameCurrent: ''
+    };
+
+    profileUpdates['/users/' + FTCtrl.currentUser.uid] = profileData;
+    firebase.database().ref().update(profileUpdates)
+    .then(function(ref){
+      console.log(ref);
+      FTCtrl.pageRouter = 'landingPage';
+    })
+
+  }
+
+
 
 /*
   GGGG  EEEEEEE  OOOOO    TTTTTTT RRRRRR    AAA    CCCCC  KK  KK
@@ -149,14 +243,68 @@ GEO TRACK
 
 
 /*
-CCCCC  RRRRRR  EEEEEEE   AAA   TTTTTTT EEEEEEE         GGGG    AAA   MM    MM EEEEEEE
-CC    C RR   RR EE       AAAAA    TTT   EE             GG  GG  AAAAA  MMM  MMM EE
-CC      RRRRRR  EEEEE   AA   AA   TTT   EEEEE         GG      AA   AA MM MM MM EEEEE
-CC    C RR  RR  EE      AAAAAAA   TTT   EE            GG   GG AAAAAAA MM    MM EE
-CCCCC  RR   RR EEEEEEE AA   AA   TTT   EEEEEEE        GGGGGG AA   AA MM    MM EEEEEEE
+NN   NN EEEEEEE WW      WW         GGGG    AAA   MM    MM EEEEEEE
+NNN  NN EE      WW      WW        GG  GG  AAAAA  MMM  MMM EE
+NN N NN EEEEE   WW   W  WW       GG      AA   AA MM MM MM EEEEE
+NN  NNN EE       WW WWW WW       GG   GG AAAAAAA MM    MM EE
+NN   NN EEEEEEE   WW   WW         GGGGGG AA   AA MM    MM EEEEEEE
 
-CREATE GAME
+NEW GAME
 */
+
+  FTCtrl.createGameSubmit = function() {
+
+    var gameKey = firebase.database().ref('Games/').push().key;
+        var gameUpdates = {};
+
+        FTCtrl.gameOptions = {
+          gameLength: FTCtrl.gameDurr,
+          gameType: FTCtrl.gameType,
+          host: FTCtrl.currentUser['uid'],
+          originlat: FTCtrl.currentLatLng.lat,
+          originlng: FTCtrl.currentLatLng.lng,
+          radius: FTCtrl.playRadius,
+          seshStickers: FTCtrl.sessionStickers
+
+
+        };
+        console.log(FTCtrl.gameOptions);
+
+        gameUpdates['/Games/' + gameKey] = FTCtrl.gameOptions;
+        firebase.database().ref().update(gameUpdates)
+        .then(function(ref){
+          console.log(ref);
+          //alert("game created");
+
+        })
+
+  };
+
+
+
+/*
+ CCCCC  UU   UU RRRRRR  RRRRRR  EEEEEEE NN   NN TTTTTTT        GGGG    AAA   MM    MM EEEEEEE
+CC    C UU   UU RR   RR RR   RR EE      NNN  NN   TTT         GG  GG  AAAAA  MMM  MMM EE
+CC      UU   UU RRRRRR  RRRRRR  EEEEE   NN N NN   TTT        GG      AA   AA MM MM MM EEEEE
+CC    C UU   UU RR  RR  RR  RR  EE      NN  NNN   TTT        GG   GG AAAAAAA MM    MM EE
+ CCCCC   UUUUU  RR   RR RR   RR EEEEEEE NN   NN   TTT         GGGGGG AA   AA MM    MM EEEEEEE
+
+CURRENT GAME
+*/
+
+
+
+
+/*
+RRRRRR  EEEEEEE   GGGG  IIIII  SSSSS  TTTTTTT EEEEEEE RRRRRR
+RR   RR EE       GG  GG  III  SS        TTT   EE      RR   RR
+RRRRRR  EEEEE   GG       III   SSSSS    TTT   EEEEE   RRRRRR
+RR  RR  EE      GG   GG  III       SS   TTT   EE      RR  RR
+RR   RR EEEEEEE  GGGGGG IIIII  SSSSS    TTT   EEEEEEE RR   RR
+
+Register
+*/
+
 
 
 

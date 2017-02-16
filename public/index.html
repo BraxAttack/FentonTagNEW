@@ -23,15 +23,33 @@
 
 <div ng-controller="FentonTagCtrl as FTCtrl">
 
-  <div id="loginPage" ng-if="FTCtrl.signedIn == 'false'">
-    <h1>Log In</h1>
-    <form ng-submit="FTCtrl.authSignInWEmailPass()">
-      <input type="text" ng-model="FTCtrl.authEmail" />
-      <input type="password" ng-model="FTCtrl.authPass"  />
-      <button type="submit">Sign In</button>
-    </form>
+  <div ng-if="FTCtrl.signedIn == 'false'">
 
-    {{FTCtrl.signedIn}}
+
+    <div id="loginPage" ng-if="FTCtrl.pageRouter == null">
+      <h1>Log In</h1>
+      <form ng-submit="FTCtrl.authSignInWEmailPass()">
+        <input type="text" ng-model="FTCtrl.authEmail" />
+        <input type="password" ng-model="FTCtrl.authPass"  />
+        <button type="submit">Sign In</button>
+      </form>
+      <button ng-click="FTCtrl.setPageRouter('signUp')">Sign up</button>
+
+      {{FTCtrl.signedIn}}
+
+    </div>
+
+
+    <div id="registerPage" ng-if="FTCtrl.pageRouter == 'signUp'">
+      Sign Up
+      <form ng-submit="FTCtrl.authRegisterWithEmailPass()">
+        <input type="text" ng-model="FTCtrl.registerEmail" />
+        <input type="password" ng-model="FTCtrl.registerPass"  />
+        <button type="submit">Register</button>
+      </form>
+
+      <button ng-click="FTCtrl.setPageRouter(null)">Sign up</button>
+    </div>
 
   </div>
 
@@ -60,8 +78,31 @@ LANDING
         <br />
         <br />
         <button ng-click="FTCtrl.logOut()">log Out</button>
+        <br />
+        {{FTCtrl.currentUserUserList}}
+        <br />
+        {{FTCtrl.currentUser}}
 
 
+      </div>
+
+<!--
+PPPPPP  RRRRRR   OOOOO  FFFFFFF IIIII LL      EEEEEEE
+PP   PP RR   RR OO   OO FF       III  LL      EE
+PPPPPP  RRRRRR  OO   OO FFFF     III  LL      EEEEE
+PP      RR  RR  OO   OO FF       III  LL      EE
+PP      RR   RR  OOOO0  FF      IIIII LLLLLLL EEEEEEE
+
+PROFILE
+-->
+
+      <div id="profileEdit" ng-if="FTCtrl.pageRouter == 'profileEdit'">
+        profie Edit
+        <br />
+        <form ng-submit="FTCtrl.setDisplayName()">
+          <input type="text" ng-model="FTCtrl.setDisplayNameVar" />
+          <button type="submit" ng-if="FTCtrl.setDisplayNameVar != ''">Submit</button>
+        </form>
 
       </div>
 
@@ -105,11 +146,18 @@ NEW GAME
         <button ng-click="FTCtrl.setUpMapCalFunction()">resubmit</button>
 
         <br />
-        <div id="newGameMap" style="height: 500px; width: 500px;"></div>
+        <div id="newGameMap" style="height: 70vw; width: 70vw;"></div>
+
+        <br />
+        <button ng-click="FTCtrl.createGameSubmit()">Init Game</button>
 
         <br />
         {{FTCtrl.sessionStickers}}
         <br />
+        {{FTCtrl.currentUser['uid']}}
+
+
+
 
       </div>
 
