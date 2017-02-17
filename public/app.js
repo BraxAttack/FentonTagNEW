@@ -90,7 +90,7 @@ var init
       FTCtrl.GameName = "Game (real original...)"
       FTCtrl.getGameInfoVar = GameInfo;
       FTCtrl.whichQR = "";
-
+      FTCtrl.StickerCooldownTime = 120000;
 /*
       $interval(function () {
         console.log(FTCtrl.currentUser);
@@ -402,7 +402,7 @@ CURRENT GAME
     var CurrentGameID =   document.getElementById('CurrentGameVariableHolder').value;
     //alert("going");
     if(CurrentGameID != 'null'){
-      alert(CurrentGameID);
+      //alert(CurrentGameID);
 
       FTCtrl.GameLogicHuntersAndGatherers(CurrentGameID);
 
@@ -415,7 +415,7 @@ CURRENT GAME
 
   FTCtrl.initCurrentGame = function() {
       console.log("current Game")
-      FTCtrl.CurrentGameIntervalPromise = $interval(FTCtrl.CurrentGameIntervalFunction , 5000);
+      FTCtrl.CurrentGameIntervalPromise = $interval(FTCtrl.CurrentGameIntervalFunction , 500);
 
   }
 
@@ -452,35 +452,61 @@ GAME LOGIC
         //console.log(sticker);
 
         if(sticker['stickerName'] == stickerID) {
-        //am removing location condition for the sake of actually having a working gameStickers
 
-            //checks to see if current location is close to sticker location
-        //    if((FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1)) < .05) {
-        //      console.log(FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1));
-        //alert(stickerID);
-              angular.forEach(FTCtrl.currentGamePlayersList, function(player) {
-                if(player['id'] == FTCtrl.currentUser.uid) {
-                    console.log(player);
-                    FTCtrl.playerPoints = player['points'];
-                }
+            angular.forEach(FTCtrl.currentGamePlayersList, function(player, key) {
+              if(player['id'] == FTCtrl.currentUser.uid) {
+              angular.forEach(player['stickerTag'], function(sticker, key) {
+                if(sticker['name'] == stickerID) {
+                    var currentTime = Date.now();
+                    if(currentTime > sticker['time']) {
+                      //alert(sticker['time']);
+                      angular.forEach(FTCtrl.currentGamePlayersList, function(player) {
+                        if(player['id'] == FTCtrl.currentUser.uid) {
+                            console.log(player);
+                            FTCtrl.playerPoints = player['points'];
+                        }
+                      })
+                      console.log(FTCtrl.playerPoints);
+                      //actually adds points to player
+                      FTCtrl.playerPoints = FTCtrl.playerPoints + 1;
+                      console.log(FTCtrl.playerPoints);
+
+                      //for cooldown data
+                      var currentTime = Date.now();
+
+                      FTCtrl.lastTagStickerUpdatesTime = {
+                        name: stickerID,
+                        time: currentTime + FTCtrl.StickerCooldownTime
+                      }
+
+
+
+                      var pointsUpdates = {};
+                      var lastTagStickerUpdates = {};
+                      pointsUpdates['/GamePlayers/' + FTCtrl.currentGameGameList['$id'] + '/' + FTCtrl.currentUser.uid + '/points'] = FTCtrl.playerPoints;
+                      firebase.database().ref().update(pointsUpdates)
+                      .then(function(){
+                          lastTagStickerUpdates['/GamePlayers/' + FTCtrl.currentGameGameList['$id'] + '/' + FTCtrl.currentUser.uid + '/stickerTag/' + stickerID] = FTCtrl.lastTagStickerUpdatesTime;
+                          firebase.database().ref().update(lastTagStickerUpdates)
+                          .then(function(){
+
+                            alert("points")
+
+                          })
+
+                      })
+
+                    }else{
+                      var timeleft = Math.floor((sticker['time'] - currentTime)/1000);
+                      alert("you need to wait " + timeleft + " seconds before you can hit this sticker again");
+                    }
+
+
+
+                  }
               })
-              console.log(FTCtrl.playerPoints);
-              //actually adds points to player
-              FTCtrl.playerPoints = FTCtrl.playerPoints + 1;
-              console.log(FTCtrl.playerPoints);
-
-              var pointsUpdates = {};
-              pointsUpdates['/GamePlayers/' + FTCtrl.currentGameGameList['$id'] + '/' + FTCtrl.currentUser.uid + '/points'] = FTCtrl.playerPoints;
-              firebase.database().ref().update(pointsUpdates)
-              .then(function(){
-
-                alert("points")
-
-              })
-
-          //  }else{
-          //    alert("liar!");
-          //  }
+            }
+          })
 
         }
 

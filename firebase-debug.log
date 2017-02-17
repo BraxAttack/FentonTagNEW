@@ -1,14 +1,14 @@
 [debug] ----------------------------------------------------------------------
-[debug] Command:      C:\Program Files\nodejs\node.exe C:\Users\young\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase deploy
+[debug] Command:      C:\Program Files\nodejs\node.exe C:\Users\young\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
 [debug] CLI Version:  3.2.3
 [debug] Platform:     win32
 [debug] Node Version: v6.9.4
-[debug] Time:         Fri Feb 17 2017 01:00:48 GMT-0500 (Eastern Standard Time)
+[debug] Time:         Fri Feb 17 2017 02:11:49 GMT-0500 (Eastern Standard Time)
 [debug] ----------------------------------------------------------------------
 [debug] 
-[debug] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase"]
-[debug] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/fentontag-c0828  
- Fri Feb 17 2017 01:00:48 GMT-0500 (Eastern Standard Time)
-[debug] <<< HTTP RESPONSE 200
-[debug] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/fentontag-c0828/tokens  
- Fri Feb 17 2017 01:00:49 GMT-0500 (Eastern Standard Time)
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: C:\Users\young\Documents\GitHub\fentontagnew
+[info] Public Directory: public
+[info] 
+[info] Server listening at: http://localhost:5000
