@@ -1,0 +1,76 @@
+body {
+  background-color: #F5F5F5;
+  font-family: sans-serif;
+}
+
+#preWholeDivLoad {
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+  padding-top: 30vh;
+}
+
+.loginPageCenterDiv {
+  text-align: center;;
+  width: 50vw;
+  position: absolute;
+  left: 25vw;
+  top: 30vh;
+}
+
+.registerPageCenterDiv {
+  text-align: center;;
+  width: 50vw;
+  position: absolute;
+  left: 25vw;
+  top: 30vh;
+}
+
+#landingPage {
+  width: 100vw;
+  height: 100vh;
+}
+
+.landingPageHeader {
+  background-color: #757575;
+  height: 50px;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.landingPageBody {
+  height: calc(100vh - 50px);
+  width: 100vw;
+  position: absolute;
+  top: 50px;
+  left: 0;
+}
+
+.landingPageHeaderLabel {
+  float: left;
+  line-height: 50px;
+  margin: 0px;
+  margin-left: 20px;
+}
+
+.landingPageUsernameLabel {
+  float: right;
+  margin: 0;
+  line-height: 50px;
+}
+
+.landingPageEditProfBtn {
+  float: right;
+  margin: 15px;
+  height: 20px;
+}
+
+.landingPageMainButtons {
+  width: 40vw;
+  margin: calc(5vh - 13px) calc(5vw - 2px);
+  padding: 0px;
+  height: 40vh;
+}

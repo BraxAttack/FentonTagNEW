@@ -884,6 +884,9 @@ MAPS
             }
       }
 
+      //keeps that nasty loading thing from looking dumb
+      document.getElementById('wholeDiv').style.display = "block";
+      document.getElementById('preWholeDivLoad').style.display = "none";
 
 
   })
@@ -1071,6 +1074,9 @@ MAPS
         });
       }
     };
+
+
+
   }])
 
 

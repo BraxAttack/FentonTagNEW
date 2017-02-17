@@ -16,45 +16,59 @@
   <script src="app.js"></script>
   <script src="bridgeITtest/QRscan.js"></script>
   <!--services -->
-  <style>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css" />
 
-  </style>
+<body ng-app="fentonTagApp" style="margin: 0px;  background-color: ;">
 
-<body ng-app="fentonTagApp" style="margin: 0px;  background-color: lightgreen;">
-
-
-<div ng-controller="FentonTagCtrl as FTCtrl">
+<div id="preWholeDivLoad">
+  <h1>FentonTag</h1>
+  <h3>Having trouble? try opening FentonTag in Chrome</h3>
+</div>
+<div id="wholeDiv" ng-controller="FentonTagCtrl as FTCtrl" style="display: none">
 
   <div ng-if="FTCtrl.signedIn == 'false'">
 
 
     <div id="loginPage" ng-if="FTCtrl.pageRouter == null">
-      <h1>Log In</h1>
-      <button ng-click="FTCtrl.authGoogle()">Google</button>
-      <form ng-submit="FTCtrl.authSignInWEmailPass()">
-        <input type="text" ng-model="FTCtrl.authEmail" />
-        <input type="password" ng-model="FTCtrl.authPass"  />
-        <button type="submit">Sign In</button>
-      </form>
-      <button ng-click="FTCtrl.setPageRouter('signUp')">Sign up</button>
+      <div class="loginPageCenterDiv">
+          <h1>FentonTag</h1>
+          <br />
+          <h2>Log In</h2>
+          <button ng-click="FTCtrl.authGoogle()">Login with Google</button>
+          <br />
+          <br />
+          <form ng-submit="FTCtrl.authSignInWEmailPass()">
+            <input type="text" ng-model="FTCtrl.authEmail" placeholder="Email"/>
+            <br />
+            <input type="password" ng-model="FTCtrl.authPass"  placeholder="Password"/>
+            <br />
+            <button type="submit">Sign In</button>
+          </form>
+          <p>Don't have an account? <strong ng-click="FTCtrl.setPageRouter('signUp')">Register</strong></p>
 
-<!--
-      {{FTCtrl.signedIn}}
--->
+      </div>
+
+
     </div>
 
 
     <div id="registerPage" ng-if="FTCtrl.pageRouter == 'signUp'">
-      Sign Up
-      <br />
-      <button ng-click="FTCtrl.setPageRouter(null)">log in</button>
-      <br />
-      <form ng-submit="FTCtrl.authRegisterWithEmailPass()">
-        <input type="text" ng-model="FTCtrl.registerEmail" />
-        <input type="password" ng-model="FTCtrl.registerPass"  />
-        <button type="submit">Register</button>
-      </form>
+      <div class="registerPageCenterDiv">
 
+        <h1>FentonTag</h1>
+        <br />
+        <h2>Register</h2>
+        <br />
+        <form ng-submit="FTCtrl.authRegisterWithEmailPass()">
+          <input type="text" ng-model="FTCtrl.registerEmail" placeholder="Email"/>
+          <br />
+          <input type="password" ng-model="FTCtrl.registerPass" placeholder="Password"/>
+          <br />
+          <button type="submit">Register</button>
+          <br />
+          <p>Already have an account? <strong ng-click="FTCtrl.setPageRouter(null)">Sign In</strong></p>
+        </form>
+      </div>
 
     </div>
 
@@ -71,36 +85,25 @@ LL       AAAAA  NNN  NN DD  DD   III  NNN  NN  GG  GG
 LL      AA   AA NN N NN DD   DD  III  NN N NN GG
 LL      AAAAAAA NN  NNN DD   DD  III  NN  NNN GG   GG
 LLLLLLL AA   AA NN   NN DDDDDD  IIIII NN   NN  GGGGGG
+
 LANDING
 -->
 
-
-
-
       <div id="landingPage" ng-if="FTCtrl.pageRouter == 'landingPage'">
-        Landing Page
-        <br />
-        <h1>{{FTCtrl.currentUserUserList['displayName']}}</h1>
-        <h3>{{FTCtrl.currentUser['email']}}</h3>
-        <button ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction();">Create Game</button>
-        <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker();">Register Sticker</button>
-        <button ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame(); FTCtrl.whichQR = 'GameCode'; FTCtrl.initCurrentGame(); FTCtrl.initCurrentGamePlayerRankInterval();">current Game</button>
-        <button ng-click="FTCtrl.setPageRouter('profileEdit'); FTCtrl.setEditInputsToValues();">Edit Profile</button>
-        <button ng-click="FTCtrl.setPageRouter('joinGame'); FTCtrl.JoinGame();">Join Game</button>
+        <div class="landingPageHeader">
+          <h3 class="landingPageHeaderLabel">Landing Page</h3>
+          <button class="landingPageEditProfBtn" ng-click="FTCtrl.setPageRouter('profileEdit'); FTCtrl.setEditInputsToValues();">Edit Profile</button>
+          <h3 class="landingPageUsernameLabel">{{FTCtrl.currentUserUserList['displayName']}}</h3>
 
+        </div>
+        <div class="landingPageBody">
+          <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction();">Create Game</button>
+          <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker();">Register Sticker</button>
+          <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame(); FTCtrl.whichQR = 'GameCode'; FTCtrl.initCurrentGame(); FTCtrl.initCurrentGamePlayerRankInterval();">current Game</button>
+          <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('joinGame'); FTCtrl.JoinGame();">Join Game</button>
 
-        <br />
-        <br />
-        <br />
-        <button ng-click="FTCtrl.logOut()">log Out</button>
+        </div>
 
-        <br />
-<!--
-        {{FTCtrl.currentUserUserList}}
-
-        <br />
-        {{FTCtrl.currentUser}}
--->
 
       </div>
 
@@ -116,6 +119,7 @@ PROFILE
 
       <div id="profileEdit" ng-if="FTCtrl.pageRouter == 'profileEdit'">
         profie Edit
+        <button ng-click="FTCtrl.logOut()" ng-if="FTCtrl.currentUserUserList.displayName">log Out</button>
         <br />
         <button ng-click="FTCtrl.setPageRouter('landingPage')" ng-if="FTCtrl.currentUserUserList.displayName">homepage</button>
         <br />
@@ -271,7 +275,7 @@ CURRENT GAME
         onclick="bridgeit.scan('scanBtn','onAfterCaptureScanCurrentGame');">
         Get Points
     </button>
-    <input type="text" id="CurrentGameVariableHolder" value="null" style="display: ;" autocomplete="off"/>
+    <input type="text" id="CurrentGameVariableHolder" value="null" style="display: none;" autocomplete="off"/>
     <br />
     <br />
 
@@ -368,7 +372,7 @@ NEW STICKER
         <button ng-click="FTCtrl.lookupLatLng()">Lookup!</button>
         -->
 
-        <input type="text" id="registerStickerVariableHolder" value="null" style="display: ;" autocomplete="off"/>
+        <input type="text" id="registerStickerVariableHolder" value="null" style="display: none;" autocomplete="off"/>
 
         {{FTCtrl.NewStickerVal}}
 
@@ -394,7 +398,7 @@ NEW STICKER
   </div>
 
 
-</div>
+
 
 
 <!-- html complete -->
