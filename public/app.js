@@ -396,6 +396,52 @@ CURRENT GAME
 
   }
 
+  FTCtrl.CurrentGamePlayerRankInterval = function() {
+    console.log("updating ranking")
+    FTCtrl.CurrentGamePlayerRank = [];
+    FTCtrl.CurrentGamePlayerRankDoneList = [];
+
+    var objectArray = FTCtrl.currentGamePlayersList;
+
+
+    angular.forEach(objectArray, function(whatever, ewkey) {
+      var topdog = "";
+      var topdogvar = -1;
+        angular.forEach(objectArray, function(person, key) {
+          console.log(FTCtrl.CurrentGamePlayerRankDoneList.indexOf(person['id']));
+          if(person['points'] > topdogvar && FTCtrl.CurrentGamePlayerRankDoneList.indexOf(person['id']) == -1){
+            topdogvar = person['points'];
+            topdog = {
+              name: person['name'],
+              id: person['id'],
+              points: person['points']
+            }
+          }
+        })
+
+    FTCtrl.CurrentGamePlayerRank.push(topdog)
+    FTCtrl.CurrentGamePlayerRankDoneList.push(topdog['id'])
+    //console.log(FTCtrl.CurrentGamePlayerRank);
+    //console.log(FTCtrl.CurrentGamePlayerRankDoneList);
+    })
+    console.log(FTCtrl.CurrentGamePlayerRank);
+    console.log(FTCtrl.CurrentGamePlayerRankDoneList);
+
+
+  }
+
+  FTCtrl.cancelCurrentGamePlayerRankInterval = function() {
+    $interval.cancel(FTCtrl.CurrentGamePlayerRankPromise);
+  }
+
+  FTCtrl.initCurrentGamePlayerRankInterval = function() {
+      console.log("current Game")
+      FTCtrl.CurrentGamePlayerRankInterval();
+      FTCtrl.CurrentGamePlayerRankPromise = $interval(FTCtrl.CurrentGamePlayerRankInterval , 5000);
+
+  }
+
+
 
 
   FTCtrl.CurrentGameIntervalFunction = function() {
