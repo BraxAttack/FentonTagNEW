@@ -20,7 +20,7 @@
 
   </style>
 
-<body ng-app="fentonTagApp">
+<body ng-app="fentonTagApp" style="margin: 0px">
 
 
 <div ng-controller="FentonTagCtrl as FTCtrl">
@@ -84,7 +84,7 @@ LANDING
         <h3>{{FTCtrl.currentUser['email']}}</h3>
         <button ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction();">Create Game</button>
         <button ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker();">Register Sticker</button>
-        <button ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame();">current Game</button>
+        <button ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame(); FTCtrl.whichQR = 'GameCode'; FTCtrl.initCurrentGame();">current Game</button>
         <button ng-click="FTCtrl.setPageRouter('profileEdit'); FTCtrl.setEditInputsToValues();">Edit Profile</button>
         <button ng-click="FTCtrl.setPageRouter('joinGame'); FTCtrl.JoinGame();">Join Game</button>
 
@@ -93,9 +93,11 @@ LANDING
         <br />
         <br />
         <button ng-click="FTCtrl.logOut()">log Out</button>
-<!--
+
         <br />
+<!--
         {{FTCtrl.currentUserUserList}}
+
         <br />
         {{FTCtrl.currentUser}}
 -->
@@ -121,7 +123,7 @@ PROFILE
           <input type="text" ng-model="FTCtrl.setDisplayNameVar" />
           <button type="submit" ng-if="FTCtrl.setDisplayNameVar != ''">Submit</button>
         </form>
-
+        <!--{{FTCtrl.currentUserUserList}}-->
       </div>
 
 
@@ -176,7 +178,6 @@ NEW GAME
         <br />
         {{FTCtrl.sessionStickers}}
 -->
-
       </div>
 
 <!--
@@ -192,40 +193,86 @@ CURRENT GAME
   <div id="currentGame" ng-if="FTCtrl.pageRouter == 'currentGame'">
     Current Game
     <br />
-    <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
+    <button ng-click="FTCtrl.setPageRouter('landingPage'); FTCtrl.cancelCurrentGame()">homepage</button>
     <br />
-    Game Name:
-    {{FTCtrl.currentUserUserList['$id']}}
+    Game ID:
+    {{FTCtrl.currentGameGameList['$id']}}
     <br />
     Game Length:
-    {{FTCtrl.currentUserUserList['gameLength']}}
+    {{FTCtrl.currentGameGameList['gameLength']}}
     <br />
     Game Name:
-    {{FTCtrl.currentUserUserList['gameName']}}
+    {{FTCtrl.currentGameGameList['gameName']}}
     <br />
     Game Type:
-    {{FTCtrl.currentUserUserList['$id']}}
+    {{FTCtrl.currentGameGameList['$id']}}
     <br />
     Lat/Lng:
-    {{FTCtrl.currentUserUserList['originlat']}} / {{FTCtrl.currentUserUserList['originlng']}}
+    {{FTCtrl.currentGameGameList['originlat']}} / {{FTCtrl.currentGameGameList['originlng']}}
     <br />
     Radius
-    {{FTCtrl.currentUserUserList['radius']}}
+    {{FTCtrl.currentGameGameList['radius']}}
+    <br />
+    Stickers:
+    {{FTCtrl.currentGameGameList['gameStickers']}}
+    <br />
+    Game info:
+      {{FTCtrl.currentGameInfo}}
+    <br />
+    Players:
+    {{FTCtrl.currentGamePlayersList}}
+
+    <br/>
+    Players
+    <div ng-repeat="player in FTCtrl.currentGamePlayersList">
+      <br />
+      name: {{player['name']}}
+      <br />
+      points: {{player['points']}}
+      <br />
+    
+      <br />
+
+    </div>
+
+    <br />
+    <br />
+    This person
+    <div ng-repeat="player in FTCtrl.currentGamePlayersList" ng-if="player['id'] == FTCtrl.currentUser.uid" style="color: green;">
+      name: {{player['name']}}
+      <br />
+      points: {{player['points']}}
+      <br />
+
+      <br />
+
+    </div>
+    <br />
+    <br />
+    <button ng-click="foo = FTCtrl.currentUser.uid; FTCtrl.whichQR = 'GameCode'">Game Code</button>
+    <button ng-click="foo = FTCtrl.currentGameGameList['$id']; FTCtrl.whichQR = 'IDCode';">ID Code</button>
     <br />
 
-    {{FTCtrl.currentGameInfo}}
 
-    <button ng-click="foo = 'get it'">apply</button>
-
-
-
+    {{FTCtrl.whichQR}}
+    <br />
 
     <h1>Angular QR Code</h1>
 
 
+    <qrcode version="4" error-correction-level="H" size="250" data="{{foo}}"></qrcode>
+<!--
+    {{FTCtrl.currentGameGameList}}
+-->
 
-    <qrcode version="3" error-correction-level="H" size="250" data="{{foo}}"></qrcode>
-
+    <br />
+    <button id="CurrentGameScanBtn" type="button" class="btn" style="color: black;"
+        onclick="bridgeit.scan('scanBtn','onAfterCaptureScanCurrentGame');">
+        Get Points
+    </button>
+    <input type="text" id="CurrentGameVariableHolder" value="null" style="display: ;" autocomplete="off"/>
+    <br />
+    <br />
 
 
 
@@ -251,7 +298,7 @@ Join Game
         onclick="bridgeit.scan('scanBtn','onAfterCaptureScanJoinGame');">
         Scan a Code
     </button>
-    <input type="text" id="JoinGameVariableHolder" value="null" style="display: ;" autocomplete="off"/>
+    <input type="text" id="JoinGameVariableHolder" value="null" style="display: none;" autocomplete="off"/>
 
 
 
@@ -268,7 +315,7 @@ SS        TTT    III  CC    C KK KK  EE      RR   RR       MMM  MMM  AAAAA  PP  
 STICKER MAP
 -->
 
-
+<!--
       <div id="stickerMap" ng-if="FTCtrl.pageRouter == 'stickerMap'">
         Sticker Map
         <button ng-click="FTCtrl.setPageRouter('landingPage')">homepage</button>
@@ -281,13 +328,15 @@ STICKER MAP
 
         <br />
         <div id="map" style="height: 500px; width: 500px;"></div>
+-->
 <!--
         <br />
         {{FTCtrl.AllStickers}}
         <br />
-        {{FTCtrl.sessionStickers}}
-        <br />
--->
+      -->
+
+
+<!-- -->
 
 
       </div>
@@ -305,7 +354,7 @@ NEW STICKER
 
 
       <div id="registerSticker" ng-if="FTCtrl.pageRouter == 'registerSticker'">
-        register Sticker
+        register Sticker f
         <br />
         <button ng-click="FTCtrl.setPageRouter('landingPage'); FTCtrl.cancelRegisterSticker()">homepage</button>
         <br />
@@ -323,7 +372,7 @@ NEW STICKER
         {{FTCtrl.NewStickerVal}}
 
 
-        <div id="newStickerMap" style="height: 500px; width: 500px;"></div>
+        <div id="newStickerMap" style="height: 100vw; width: 100vw;"></div>
 
         <div ng-if="FTCtrl.readyForCheckVar == 'true'">
           <h3>Is this your current location?</h3>

@@ -17,3 +17,11 @@ function onAfterCaptureScanJoinGame(event)  {
   document.getElementById('JoinGameVariableHolder').value = event.value;
 
 }
+
+function onAfterCaptureScanCurrentGame(event)  {
+
+  //alert(event.value);
+
+  document.getElementById('CurrentGameVariableHolder').value = event.value;
+
+}

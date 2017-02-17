@@ -35,12 +35,17 @@
   app.factory('GameInfo', function($firebaseArray, $firebaseObject){
 
     var gameRef = firebase.database().ref('Games');
+    var playersRef = firebase.database().ref('GamePlayers');
     var users = $firebaseArray(gameRef);
 
     var Game = {
       getGameInfo: function(uid){
         return $firebaseObject(gameRef.child(uid));
+      },
+      getGameInfoPlayers: function(uid){
+        return $firebaseObject(playersRef.child(uid));
       }
+
     };
 
     return Game;
@@ -84,6 +89,7 @@ var init
       FTCtrl.setDisplayNameVar = "";
       FTCtrl.GameName = "Game (real original...)"
       FTCtrl.getGameInfoVar = GameInfo;
+      FTCtrl.whichQR = "";
 
 /*
       $interval(function () {
@@ -326,29 +332,9 @@ NEW GAME
         firebase.database().ref().update(gameUpdates)
         .then(function(ref){
           console.log(ref);
-          var profileUpdates = {};
-          profileUpdates['/users/' + FTCtrl.currentUser.uid + '/gameCurrent'] = gameKey;
-          firebase.database().ref().update(profileUpdates)
-          .then(function(ref){
-            console.log(ref);
-                var addUserToGame = {};
-                var playerData = {
-                  points: 0,
-                  pointsHit: {}
-                }
-                addUserToGame['/GamePlayers/' + gameKey + '/' + FTCtrl.currentUser.uid] = playerData;
-                firebase.database().ref().update(addUserToGame)
-                .then(function(ref){
-                  console.log("added")
-                  console.log(ref);
 
-                  //updates the current game
-                  FTCtrl.getCurrentGame();
-                  FTCtrl.pageRouter = 'currentGame';
-                  $scope.$apply();
-                })
-          })
-
+          //add user to game
+          FTCtrl.JoinGameAddToFirebaseUserInfo(gameKey);
 
         })
 
@@ -371,17 +357,33 @@ CURRENT GAME
     if (FTCtrl.currentUserUserList['gameCurrent'] != null) {
       //console.log(FTCtrl.currentUserUserList);
       FTCtrl.getGameInfoVar.getGameInfo(FTCtrl.currentUserUserList['gameCurrent']).$loaded()
-        .then(function (profile){
+        .then(function (game){
 
-            console.log(profile);
-            FTCtrl.currentUserUserList = profile;
+            console.log(game);
+            FTCtrl.currentGameGameList = game;
 
-              $scope.foo = FTCtrl.currentUserUserList['$id']
-
+              $scope.foo = FTCtrl.currentGameGameList['$id']
+              $scope.$apply();
 
             //alert("got IT")
 
         });
+        FTCtrl.getGameInfoVar.getGameInfoPlayers(FTCtrl.currentUserUserList['gameCurrent']).$loaded()
+          .then(function (gamePlayers){
+
+              //console.log(gamePlayers);
+              FTCtrl.currentGamePlayersList = gamePlayers;
+
+              console.log("words can hurt");
+              console.log(FTCtrl.currentGamePlayersList);
+              $scope.$apply();
+
+
+
+          });
+
+
+
 
 
     }else{
@@ -395,6 +397,114 @@ CURRENT GAME
   }
 
 
+
+  FTCtrl.CurrentGameIntervalFunction = function() {
+    var CurrentGameID =   document.getElementById('CurrentGameVariableHolder').value;
+    //console.log(CurrentGameID)
+    if(CurrentGameID != 'null'){
+
+      FTCtrl.GameLogicHuntersAndGatherers(CurrentGameID);
+
+      document.getElementById('CurrentGameVariableHolder').value = "null";
+
+    }
+
+
+  }
+
+  FTCtrl.initCurrentGame = function() {
+      console.log("current Game")
+      FTCtrl.CurrentGameIntervalPromise = $interval(FTCtrl.CurrentGameIntervalFunction , 250);
+
+  }
+
+  FTCtrl.cancelCurrentGame = function () {
+    $interval.cancel(FTCtrl.CurrentGameIntervalPromise);
+    //console.log("done");
+  }
+
+
+
+/*
+  GGGG    AAA   MM    MM EEEEEEE    LL       OOOOO    GGGG  IIIII  CCCCC
+ GG  GG  AAAAA  MMM  MMM EE         LL      OO   OO  GG  GG  III  CC    C
+GG      AA   AA MM MM MM EEEEE      LL      OO   OO GG       III  CC
+GG   GG AAAAAAA MM    MM EE         LL      OO   OO GG   GG  III  CC    C
+ GGGGGG AA   AA MM    MM EEEEEEE    LLLLLLL  OOOO0   GGGGGG IIIII  CCCCC
+
+GAME LOGIC
+*/
+
+
+  FTCtrl.GameLogicHuntersAndGatherers = function(stickerID) {
+    FTCtrl.currentLatLng = "";
+    FTCtrl.lookupLatLng()
+    FTCtrl.GameLogicHuntersAndGatherersDependancy(stickerID)
+
+  }
+
+  FTCtrl.GameLogicHuntersAndGatherersDependancy = function(stickerIDDepend) {
+
+    if(FTCtrl.currentLatLng){
+
+        angular.forEach(FTCtrl.currentGameGameList['gameStickers'], function(sticker, key) {
+          //console.log(sticker);
+
+          if(sticker['stickerName'] == stickerIDDepend) {
+              //console.log(FTCtrl.currentLatLng.lat);
+              //console.log(sticker['stickerLat']);
+
+              //checks to see if current location is close to sticker location
+              if((FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1)) < .05) {
+                console.log(FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1));
+
+                angular.forEach(FTCtrl.currentGamePlayersList, function(player) {
+                  if(player['id'] == FTCtrl.currentUser.uid) {
+                      console.log(player);
+                      FTCtrl.playerPoints = player['points'];
+                  }
+                })
+                console.log(FTCtrl.playerPoints);
+                //actually adds points to player
+                FTCtrl.playerPoints = FTCtrl.playerPoints + 1;
+                console.log(FTCtrl.playerPoints);
+
+                var pointsUpdates = {};
+                pointsUpdates['/GamePlayers/' + FTCtrl.currentGameGameList['$id'] + '/' + FTCtrl.currentUser.uid + '/points'] = FTCtrl.playerPoints;
+                firebase.database().ref().update(pointsUpdates)
+                .then(function(){
+                  
+
+                  console.log("we");
+
+                  console.log(FTCtrl.currentGamePlayersList[userID])
+
+
+                })
+
+              }else{
+                alert("liar!");
+              }
+          }
+
+
+        });
+
+        //alert(stickerIDDepend);
+
+
+    }else{
+      console.log("not yet")
+      $timeout(function () {
+      FTCtrl.GameLogicHuntersAndGatherersDependancy(stickerIDDepend);
+      }, 100);
+    }
+
+
+  }
+
+
+
 /*
     JJJ  OOOOO  IIIII NN   NN       GGGG    AAA   MM    MM EEEEEEE
     JJJ OO   OO  III  NNN  NN      GG  GG  AAAAA  MMM  MMM EE
@@ -405,14 +515,46 @@ JJ  JJJ OO   OO  III  NN  NNN     GG   GG AAAAAAA MM    MM EE
 JOIN GAME
 */
 
+FTCtrl.JoinGameAddToFirebaseUserInfo = function(gameKey) {
+  var addUserToGame = {};
+  var playerData = {
+    points: 0,
+    name: FTCtrl.currentUserUserList['displayName'],
+    id: FTCtrl.currentUser.uid,
+    pointsHit: {}
+  }
+  addUserToGame['/GamePlayers/' + gameKey + '/' + FTCtrl.currentUser.uid + '/'] = playerData;
+  firebase.database().ref().update(addUserToGame)
+  .then(function(ref){
+    console.log("added")
+    console.log(ref);
+
+    var profileUpdates = {};
+    profileUpdates['/users/' + FTCtrl.currentUser.uid + '/gameCurrent'] = gameKey;
+    firebase.database().ref().update(profileUpdates)
+    .then(function(ref){
+      console.log(ref);
+
+      //updates the current game
+      FTCtrl.getCurrentGame();
+      FTCtrl.pageRouter = 'currentGame';
+      $scope.$apply();
+
+    })
+
+  })
+
+}
+
 
 
 FTCtrl.JoinGameIntervalFunction = function() {
   var JoinGameID =   document.getElementById('JoinGameVariableHolder').value;
   console.log(JoinGameID)
   if(JoinGameID != 'null'){
+    alert(JoinGameID);
+    FTCtrl.JoinGameAddToFirebaseUserInfo(JoinGameID);
 
-       
     console.log("not null");
     FTCtrl.cancelJoinGame()
   }
@@ -449,10 +591,12 @@ NEW STICKER
 
 
       FTCtrl.RegisterSTickerIntervalFunction = function() {
+
         var stickerVal =   document.getElementById('registerStickerVariableHolder').value;
         FTCtrl.readyForCheckVar = "false";
         FTCtrl.stivkerVal = stickerVal;
         if(stickerVal != 'null'){
+          //alert(stickerVal);
           if (FTCtrl.lookupLatLngOnlyOnceVar == "none") {
               FTCtrl.lookupLatLng();
               FTCtrl.lookupLatLngOnlyOnceVar = "once";
@@ -462,13 +606,14 @@ NEW STICKER
 
 
           //alert(stickerVal);
-          FTCtrl.cancelRegisterSticker();
+
 
 
           if(FTCtrl.currentLatLng != null){
-
+            //alert(stickerVal);
             FTCtrl.initMapforNewSticker(FTCtrl.currentLatLng.lat, FTCtrl.currentLatLng.lng);
 
+            FTCtrl.cancelRegisterSticker();
             FTCtrl.readyForCheckVar = "true";
 
 
@@ -623,7 +768,22 @@ MAPS
             //console.log(newsessionCtrl.calcCrow(latVar,lngVar,newsessionCtrl.stickers[i]['lat'],newsessionCtrl.stickers[i]['lng']).toFixed(1));
             console.log(FTCtrl.AllStickers[i]['$id']);
             if((FTCtrl.calcCrow(latVar,lngVar,FTCtrl.AllStickers[i]['lat'],FTCtrl.AllStickers[i]['lng']).toFixed(1)) < FTCtrl.playRadius) {
-              FTCtrl.sessionStickers.push(FTCtrl.AllStickers[i]['$id']);
+
+              var data = {
+                lat: FTCtrl.AllStickers[i]['lat'],
+                lng: FTCtrl.AllStickers[i]['lng']
+              }
+
+              var data = {
+                stickerName: FTCtrl.AllStickers[i]['$id'],
+                stickerLat: FTCtrl.AllStickers[i]['lat'],
+                stickerLng: FTCtrl.AllStickers[i]['lng']
+              }
+
+              FTCtrl.sessionStickers.push(data);
+
+
+
               var uluru = {lat: FTCtrl.AllStickers[i]['lat'], lng: FTCtrl.AllStickers[i]['lng']};
               marker = new google.maps.Marker({
                        position: uluru,
@@ -631,7 +791,7 @@ MAPS
             })
           }
         };
-
+        console.log(FTCtrl.sessionStickers);
 
       }
 
