@@ -400,8 +400,9 @@ CURRENT GAME
 
   FTCtrl.CurrentGameIntervalFunction = function() {
     var CurrentGameID =   document.getElementById('CurrentGameVariableHolder').value;
-    //console.log(CurrentGameID)
+    //alert("going");
     if(CurrentGameID != 'null'){
+      alert(CurrentGameID);
 
       FTCtrl.GameLogicHuntersAndGatherers(CurrentGameID);
 
@@ -414,7 +415,7 @@ CURRENT GAME
 
   FTCtrl.initCurrentGame = function() {
       console.log("current Game")
-      FTCtrl.CurrentGameIntervalPromise = $interval(FTCtrl.CurrentGameIntervalFunction , 250);
+      FTCtrl.CurrentGameIntervalPromise = $interval(FTCtrl.CurrentGameIntervalFunction , 5000);
 
   }
 
@@ -435,70 +436,60 @@ GG   GG AAAAAAA MM    MM EE         LL      OO   OO GG   GG  III  CC    C
 GAME LOGIC
 */
 
-
+/*
   FTCtrl.GameLogicHuntersAndGatherers = function(stickerID) {
     FTCtrl.currentLatLng = "";
-    FTCtrl.lookupLatLng()
+    //FTCtrl.lookupLatLng()
     FTCtrl.GameLogicHuntersAndGatherersDependancy(stickerID)
 
   }
+*/
+  FTCtrl.GameLogicHuntersAndGatherers = function(stickerID) {
 
-  FTCtrl.GameLogicHuntersAndGatherersDependancy = function(stickerIDDepend) {
+    //alert(stickerID)
 
-    if(FTCtrl.currentLatLng){
+      angular.forEach(FTCtrl.currentGameGameList['gameStickers'], function(sticker, key) {
+        //console.log(sticker);
 
-        angular.forEach(FTCtrl.currentGameGameList['gameStickers'], function(sticker, key) {
-          //console.log(sticker);
+        if(sticker['stickerName'] == stickerID) {
+        //am removing location condition for the sake of actually having a working gameStickers
 
-          if(sticker['stickerName'] == stickerIDDepend) {
-              //console.log(FTCtrl.currentLatLng.lat);
-              //console.log(sticker['stickerLat']);
+            //checks to see if current location is close to sticker location
+        //    if((FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1)) < .05) {
+        //      console.log(FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1));
+        //alert(stickerID);
+              angular.forEach(FTCtrl.currentGamePlayersList, function(player) {
+                if(player['id'] == FTCtrl.currentUser.uid) {
+                    console.log(player);
+                    FTCtrl.playerPoints = player['points'];
+                }
+              })
+              console.log(FTCtrl.playerPoints);
+              //actually adds points to player
+              FTCtrl.playerPoints = FTCtrl.playerPoints + 1;
+              console.log(FTCtrl.playerPoints);
 
-              //checks to see if current location is close to sticker location
-              if((FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1)) < .05) {
-                console.log(FTCtrl.calcCrow(sticker['stickerLat'],sticker['stickerLng'],FTCtrl.currentLatLng.lat,FTCtrl.currentLatLng.lng).toFixed(1));
+              var pointsUpdates = {};
+              pointsUpdates['/GamePlayers/' + FTCtrl.currentGameGameList['$id'] + '/' + FTCtrl.currentUser.uid + '/points'] = FTCtrl.playerPoints;
+              firebase.database().ref().update(pointsUpdates)
+              .then(function(){
 
-                angular.forEach(FTCtrl.currentGamePlayersList, function(player) {
-                  if(player['id'] == FTCtrl.currentUser.uid) {
-                      console.log(player);
-                      FTCtrl.playerPoints = player['points'];
-                  }
-                })
-                console.log(FTCtrl.playerPoints);
-                //actually adds points to player
-                FTCtrl.playerPoints = FTCtrl.playerPoints + 1;
-                console.log(FTCtrl.playerPoints);
+                alert("points")
 
-                var pointsUpdates = {};
-                pointsUpdates['/GamePlayers/' + FTCtrl.currentGameGameList['$id'] + '/' + FTCtrl.currentUser.uid + '/points'] = FTCtrl.playerPoints;
-                firebase.database().ref().update(pointsUpdates)
-                .then(function(){
-                  
+              })
 
-                  console.log("we");
+          //  }else{
+          //    alert("liar!");
+          //  }
 
-                  console.log(FTCtrl.currentGamePlayersList[userID])
-
-
-                })
-
-              }else{
-                alert("liar!");
-              }
-          }
+        }
 
 
-        });
+    });
 
-        //alert(stickerIDDepend);
+        //alert(stickerID);
 
 
-    }else{
-      console.log("not yet")
-      $timeout(function () {
-      FTCtrl.GameLogicHuntersAndGatherersDependancy(stickerIDDepend);
-      }, 100);
-    }
 
 
   }
