@@ -1,5 +1,6 @@
 body {
   background-color: #F5F5F5;
+  background-color: gray;
   font-family: sans-serif;
 }
 
@@ -39,6 +40,12 @@ body {
   top: 0;
   left: 0;
   overflow: hidden;
+}
+
+.subPageBacktoHomepage {
+  float: left;
+  margin: 15px 0px 15px 15px;
+  height: 20px;
 }
 
 .landingPageBody {

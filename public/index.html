@@ -98,7 +98,7 @@ LANDING
         </div>
         <div class="landingPageBody">
           <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('createGame'); FTCtrl.setUpMapCalFunction();">Create Game</button>
-          <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker();">Register Sticker</button>
+          <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('registerSticker'); FTCtrl.RegisterSticker(); FTCtrl.lookupLatLng(); document.getElementById('scanBtn').style.display = 'block';">Register Sticker</button>
           <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('currentGame'); FTCtrl.getCurrentGame(); FTCtrl.whichQR = 'GameCode'; FTCtrl.initCurrentGame(); FTCtrl.initCurrentGamePlayerRankInterval();">current Game</button>
           <button class="landingPageMainButtons" ng-click="FTCtrl.setPageRouter('joinGame'); FTCtrl.JoinGame();">Join Game</button>
 
@@ -359,43 +359,37 @@ NEW STICKER
 
 
       <div id="registerSticker" ng-if="FTCtrl.pageRouter == 'registerSticker'">
-        register Sticker f
-        <br />
-        <button ng-click="FTCtrl.setPageRouter('landingPage'); FTCtrl.cancelRegisterSticker()">homepage</button>
-        <br />
-        <button id="scanBtn" type="button" class="btn" style="color: black;"
-            onclick="bridgeit.scan('scanBtn','onAfterCaptureScan');">
-            Scan a Code
-        </button>
-
-        <!--
-        <button ng-click="FTCtrl.lookupLatLng()">Lookup!</button>
-        -->
-
-        <input type="text" id="registerStickerVariableHolder" value="null" style="display: none;" autocomplete="off"/>
-
-        {{FTCtrl.NewStickerVal}}
+        <div class="landingPageHeader">
+          <button class="subPageBacktoHomepage" ng-click="FTCtrl.setPageRouter('landingPage'); FTCtrl.cancelRegisterSticker()">homepage</button>
+          <h3 class="landingPageHeaderLabel">register Sticker</h3>
 
 
-        <div id="newStickerMap" style="height: 100vw; width: 100vw;"></div>
+        </div>
+        <div class="landingPageBody">
+            <br />
 
-        <div ng-if="FTCtrl.readyForCheckVar == 'true'">
-          <h3>Is this your current location?</h3>
+            <br />
+            <button id="scanBtn" type="button" class="btn" style="color: black;"
+                onclick="bridgeit.scan('scanBtn','onAfterCaptureScan');">
+                Scan a Code
+            </button>
 
-          <button ng-click="FTCtrl.ActullySubmitSticker('true')">Correct</button>
-          <button ng-click="FTCtrl.ActullySubmitSticker()">Wrong</button>
+            <input type="text" id="registerStickerVariableHolder" value="null" style="display: ;" autocomplete="off"/>
+
+            {{FTCtrl.NewStickerVal}}
+
+            <div id="newStickerMap" style="height: 100vw; width: 100vw;"></div>
+
+            <div ng-if="FTCtrl.readyForCheckVar == 'true'">
+              <h3>Is this your current location?</h3>
+
+              <button ng-click="FTCtrl.ActullySubmitSticker('true')">Correct</button>
+              <button ng-click="FTCtrl.ActullySubmitSticker()">Wrong</button>
+            </div>
+          </div>
         </div>
 
-
       </div>
-
-
-
-
-
-
-
-  </div>
 
 
 

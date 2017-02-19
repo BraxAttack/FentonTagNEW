@@ -91,6 +91,7 @@ var init
       FTCtrl.getGameInfoVar = GameInfo;
       FTCtrl.whichQR = "";
       FTCtrl.StickerCooldownTime = 120000;
+      FTCtrl.currentLatLng = "null";
 /*
       $interval(function () {
         console.log(FTCtrl.currentUser);
@@ -483,7 +484,7 @@ GAME LOGIC
 */
 
 /*
-  FTCtrl.GameLogicHuntersAndGatherers = function(stickerID) {
+
     FTCtrl.currentLatLng = "";
     //FTCtrl.lookupLatLng()
     FTCtrl.GameLogicHuntersAndGatherersDependancy(stickerID)
@@ -655,11 +656,14 @@ NEW STICKER
 
       FTCtrl.RegisterSTickerIntervalFunction = function() {
 
-        var stickerVal =   document.getElementById('registerStickerVariableHolder').value;
+        var stickerVal = document.getElementById('registerStickerVariableHolder').value;
         FTCtrl.readyForCheckVar = "false";
         FTCtrl.stivkerVal = stickerVal;
-        if(stickerVal != 'null'){
-          //alert(stickerVal);
+        //alert(stickerVal);
+        if(stickerVal == 'null'){
+
+        }else {
+          alert(FTCtrl.lookupLatLngOnlyOnceVar);
           if (FTCtrl.lookupLatLngOnlyOnceVar == "none") {
               FTCtrl.lookupLatLng();
               FTCtrl.lookupLatLngOnlyOnceVar = "once";
@@ -668,11 +672,12 @@ NEW STICKER
 
 
 
+
           //alert(stickerVal);
 
+          alert(FTCtrl.currentLatLng.lat);
 
-
-          if(FTCtrl.currentLatLng != null){
+          if(FTCtrl.currentLatLng != "null"){
             //alert(stickerVal);
             FTCtrl.initMapforNewSticker(FTCtrl.currentLatLng.lat, FTCtrl.currentLatLng.lng);
 
@@ -682,7 +687,12 @@ NEW STICKER
 
 
           }else{
-            FTCtrl.RegisterSTickerIntervalFunction();
+            $timeout(function () {
+              $interval.cancel(FTCtrl.registerStickerIntervalPromise);
+              FTCtrl.RegisterSTickerIntervalFunction();
+
+            }, 1000);
+
 
           }
         }
@@ -691,7 +701,7 @@ NEW STICKER
       FTCtrl.RegisterSticker = function() {
           console.log("start check register sticker")
           FTCtrl.lookupLatLng();
-          FTCtrl.registerStickerIntervalPromise = $interval(FTCtrl.RegisterSTickerIntervalFunction , 250);
+          FTCtrl.registerStickerIntervalPromise = $interval(FTCtrl.RegisterSTickerIntervalFunction , 3000);
 
 
 
